@@ -8,16 +8,17 @@
     <title>Matriculacion</title>
 </head>
 <body>
-    <a href="http://localhost:8000/contratos" download="foto">Descargar</a>
     <div class="row">
       <div class="col s12">
         <div class="row">
+          <input type="hidden" id="id_alumno">
+          <input type="hidden" id="id_encargado">
           <div class="input-field col s6">
             <input type="text" placeholder="Cedula del Alumno" id="alumno_cedula" class="validate">
             <label for="cedula">C.I Alumno</label>
           </div>
           <div class="col s6">
-            <button class="btn green darken-4" style="margin-top: 20px;">Buscar</button>
+            <button class="btn green darken-4" style="margin-top: 20px;" id="buscar_alumno">Buscar</button>
           </div>
         </div>
       </div>
@@ -33,11 +34,8 @@
       </div>
       <div class="row">
         <div class="input-field col s6">
-          <input type="text" class="validate" placeholder="Cedula del Encargado" id="encargado_cedula">
+          <input type="text" class="validate" placeholder="Cedula del Encargado" id="encargado_cedula" disabled>
           <label for="encargado_cedula">C.I Encargado</label>
-        </div>
-        <div class="col s6">
-          <button class="btn green darken-4">Buscar</button>
         </div>
       </div>
       <div class="row">
@@ -50,9 +48,14 @@
           <label for="apellido_encargado">Apellido Encargado</label>
         </div>
         <div class="row">
-          <div class="input-field col s9">
+          <div class="input-field col s6">
             <select class="browser-default" id="cursos">
               <option value="" disabled selected>Seleccione un curso</option>
+            </select>
+          </div>
+          <div class="input-field col s6">
+            <select class="browser-default" id="instituciones">
+              <option value="" disabled selected>Seleccione una Institucion</option>
             </select>
           </div>
         </div>
@@ -67,137 +70,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-
-        if (!localStorage.getItem('token')){
-            alert('No esta autorizado');
-            window.location = "/";
-        }
-
-        const url_cursos = "http://localhost:8000/cursos";
-        const url_matriculacion = "http://localhost:8000/matriculacion";
-        const url_contratos = "http://localhost:8000/contratos";
-
-        document.addEventListener('DOMContentLoaded', function() {
-            listar_cursos();
-            var elems = document.querySelectorAll('#cursos');
-            var instances = M.FormSelect.init(elems);
-        });
-
-        
-
-      // Cursos
-      
-      const btn_cancelar = document.getElementById("cancelar_matricula");
-      btn_cancelar.addEventListener("click", function(e){
-        window.location = url_contratos + "/45";
-          // const texto = `<a id="btn_descarga">Descargar Contrato</a>`;
-          // const div_descargar = document.getElementById("descarga");
-          // div_descargar.innerHTML = texto
-          // const btn_descargar_contrato = document.getElementById("btn_descarga");
-          // btn_descargar_contrato.addEventListener("click", function(e){
-          //   descargar_contrato(btn_descargar_contrato)
-        // });
-      });
-
-      const listar_cursos = async () => {
-        const solicitud = new Request(
-          url_cursos+"/1",
-          {
-          method: 'Get',
-          withCredentials: true,
-          credentials: 'include',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            'Content-Type': 'application/json'
-          }
-        });
-        const respuesta = await fetch(solicitud);
-        const cursos = await respuesta.json();
-        console.log(cursos);
-        if (!respuesta.ok){
-          alert("Algo fallo al listar los cursos");
-        }
-        else{
-          const selector = document.getElementById("cursos");
-          for (let curso of cursos){
-            let nueva_opcion = document.createElement("option");
-            nueva_opcion.value = curso.id_curso
-            nueva_opcion.text = curso.descripcion + " " + curso.seccion + " " + curso.turno;
-            selector.appendChild(nueva_opcion);
-          }
-        }
-      };
-      
-      
-
-      // Matricula
-
-      const btn_guardar_matricula = document.getElementById("guardar_matricula");
-
-      btn_guardar_matricula.addEventListener("click", function(e){
-        guardar_matricula();
-      });
-
-      const guardar_matricula = async () =>{
-        const parametros = {
-          "id_alumno": 281,
-          "id_encargado": 300,
-          "fecha_inscripcion": "2022-02-01",
-          "id_curso": 1,
-          "id_institucion": 1
-        }
-        const solicitud = new Request(url_matriculacion, {
-          method: 'Post',
-          withCredentials: true,
-          credentials: 'include',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem("token"),
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(parametros)
-        });
-
-        const respuesta = await fetch(solicitud);
-        const datos = await respuesta.json();
-        if (!respuesta.ok){
-          alert("Error al intentar ingresar Matricula");
-        }
-        else{
-          alert(datos.mensaje)
-          alert(datos.url)
-          const texto = `<a id="btn_descarga" href="${url_contratos}/45">Descargar Contrato</a>`;
-          const div_descargar = document.getElementById("descarga");
-          div_descargar.innerHTML = texto
-      
-        }
-      };
-
-      
-
-      const descargar_contrato = async (btn) => {
-
-        // const solicitud = new Request(
-        //   url_contratos+"/60",
-        //   {
-        //   method:'Get',
-        //   withCredentials: true,
-        //   credentials: 'include',
-        //   headers: {
-        //     'Authorization': 'Bearer ' + localStorage.getItem("token"),
-        //     'Content-Type': 'application/octet-stream'
-        //   }
-        // });
-
-        const respuesta = await fetch("http://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg"/*solicitud*/);
-        const blob = await respuesta.blob();
-        console.log(blob)
-        let url = window.URL.createObjectURL(blob);
-        console.log(url)
-        // btn.href = url;
-        // btn.download = "Contrato.docx";
-      };
-
-    </script>
+    <script src="matriculacion.js"></script>
 </body>
 </html>
