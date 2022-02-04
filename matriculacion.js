@@ -14,7 +14,7 @@ const url_instituciones = "http://localhost:8000/instituciones";
 const url_alumnos = "http://localhost:8000/alumnos";
 
 document.addEventListener('DOMContentLoaded', function () {
-    listar_cursos();
+    listar_instituciones();
     var elems = document.querySelectorAll('#cursos');
     var instances = M.FormSelect.init(elems);
 });
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 const form_ci_alumno = document.getElementById("alumno_cedula");
 const form_nombre_alumno = document.getElementById("nombre_alumno");
 const form_apellido_alumno = document.getElementById("apellido_alumno");
-const form_ci_encargado = document.getElementById("cedula_encargado");
+const form_ci_encargado = document.getElementById("encargado_cedula");
 const form_nombre_encargado = document.getElementById("nombre_encargado");
 const form_apellido_encargado = document.getElementById("apellido_encargado");
 const form_cursos = document.getElementById("cursos");
@@ -33,7 +33,7 @@ const form_id_alumno = document.getElementById("id_alumno");
 const form_id_encargado = document.getElementById("id_encargado");
 
 // Boton Buscar
-// Crear un campo no visible en el form para acceder a la propiedad id_alumno
+
 const btn_buscar_alumno = document.getElementById("buscar_alumno");
 btn_buscar_alumno.addEventListener("click", function (e) {
     buscar_alumno(form_ci_alumno.value);
@@ -54,12 +54,19 @@ const buscar_alumno = async (cedula) => {
         });
 
     const respuesta = await fetch(solicitud);
-    const datos = await respuesta.datos
+    const datos = await respuesta.json();
+    
     if (!respuesta.ok) {
         alert(datos.detail);
     }
     else {
-        // Cargar datos del alumno
+        form_id_alumno.value = datos.id_persona;
+        form_nombre_alumno. value = datos.nombre;
+        form_apellido_alumno.value = datos.apellido;
+        form_ci_encargado.value = datos.encargado.cedula;
+        form_nombre_encargado.value = datos.encargado.nombre;
+        form_apellido_encargado.value = datos.encargado.apellido;
+        form_id_encargado.value = datos.encargado.id_persona;
     }
 };
 
@@ -78,6 +85,7 @@ function limpiar_campos() {
     form_apellido_encargado.value = "";
     form_cursos.value = "";
     form_instituciones.value = "";
+    form_ci_encargado.value = "";
 }
 
 //Listar Cursos
@@ -105,7 +113,7 @@ const listar_cursos = async () => {
         const selector = document.getElementById("cursos");
         for (let curso of cursos) {
             let nueva_opcion = document.createElement("option");
-            nueva_opcion.value = curso.id_curso
+            nueva_opcion.value = curso.id_curso;
             nueva_opcion.text = curso.descripcion + " " + curso.seccion + " " + curso.turno;
             selector.appendChild(nueva_opcion);
         }
@@ -134,8 +142,18 @@ const listar_instituciones = async () => {
         alert(datos.detail);
     }
     else {
-        // lista instituciones
+        const selector = document.getElementById("instituciones");
+        for (let dato of datos) {
+            let nueva_opcion = document.createElement("option");
+            nueva_opcion.value = dato.id_institucion;
+            nueva_opcion.text = dato.descripcion;
+            selector.appendChild(nueva_opcion);
+        }
     }
+
+    form_instituciones.addEventListener("change", function(e){
+        listar_cursos();
+    });
 
 };
 
@@ -148,12 +166,13 @@ btn_guardar_matricula.addEventListener("click", function (e) {
 });
 
 const guardar_matricula = async () => {
+    const link_contrato = document.getElementById("link_contrato");
     const parametros = {
         "id_alumno": form_id_alumno.value,
-        "id_encargado": 300,
-        "fecha_inscripcion": "2022-02-01",
-        "id_curso": 1,
-        "id_institucion": 1
+        "id_encargado": form_id_encargado.value,
+        // "fecha_inscripcion": "2022-02-01",
+        "id_curso": form_cursos.value,
+        "id_institucion": form_instituciones.value
     }
     const solicitud = new Request(url_matriculacion, {
         method: 'Post',
@@ -172,19 +191,18 @@ const guardar_matricula = async () => {
         alert("Error al intentar ingresar Matricula");
     }
     else {
-        alert(datos.mensaje)
-        alert(datos.url)
-        const texto = `<a id="btn_descarga" href="${url_contratos}/${datos.id_matricula}" id="link_contrato">Descargar Contrato</a>`;
-        const div_descargar = document.getElementById("descarga");
-        div_descargar.innerHTML = texto;
-        const link = document.getElementById("link_contrato");
-
-        link.addEventListener("click", function (e) {
+        alert("Se incribio al alumno " + form_nombre_alumno.value)
+        link_contrato.href = `${url_contratos}/${datos.cod}`;
+        link_contrato.download = "Contrato";
+        link_contrato.style.display = "block";
+        link_contrato.addEventListener("click", function(e){
             limpiar_campos();
-
+            link_contrato.style.display = "none";
         });
-
     }
 };
+
+
+
 
 
