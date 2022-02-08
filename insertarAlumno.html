@@ -36,17 +36,27 @@
                 </div>
             </div>
             <div class="row">
+                <div class="input-field col s6">
+                    <input type="text" class="validate" id="telefono">
+                    <label for="telefono">Telefono</label>
+                </div>
+                <div class="input-field col s6">
+                    <input type="text" class="validate" id="direccion">
+                    <label for="direccion">Dirección</label>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col s6">
                     <span>Sexo del Alumno</span>
                     <p>
                         <label>
-                            <input type="radio" name="sexo" />
+                            <input type="radio" name="sexo" value="M" id="rdb_masculino" />
                             <span>Masculino</span>
                         </label>
                     </p>
                     <p>
                         <label>
-                            <input type="radio" name="sexo" />
+                            <input type="radio" name="sexo" value="F" id="rdb_femenino" />
                             <span>Femenino</span>
                         </label>
                     </p>
@@ -61,11 +71,6 @@
                 <div class="input-field col s6">
                     <input type="text" class="validate" id="cedula_encargado">
                     <label for="cedula_encargado">Cedula Encargado</label>
-                </div>
-                <div class="input-field col s6">
-                    <select class="browser-default" id="parentezcos">
-                        <option value="" disabled selected>Parentezco</option>
-                    </select>
                 </div>
             </div>
             <div class="row">
@@ -90,7 +95,7 @@
                 <div class="col s6">
                     <p>
                         <label>
-                            <input type="checkbox" />
+                            <input type="checkbox" id="chk_nacimiento" />
                             <span>Presento Certificado de Nacimiento?</span>
                         </label>
                     </p>
@@ -98,7 +103,7 @@
                 <div class="col s6">
                     <p>
                         <label>
-                            <input type="checkbox" />
+                            <input type="checkbox" id="chk_visado" />
                             <span>Presento Certificado de Estudios Visado?</span>
                         </label>
                     </p>
@@ -117,8 +122,6 @@
         </div>
         <div class="row">
             <div class="col 12" id="sacramentos_seleccionados">
-            
-              
             </div>
         </div>
         <div class="row">
@@ -132,6 +135,10 @@
             </div>
         </div>
         <div class="row">
+            <div class="col 12" id="alergias_seleccionadas">
+            </div>
+        </div>
+        <div class="row">
             <div class="input-field col s6">
                 <select class="browser-default" id="enfermedades">
                     <option value="" disabled selected>Enfermedades de Base</option>
@@ -139,6 +146,22 @@
             </div>
             <div class="col s6">
                 <button class="btn green darken-4" id="agregar_enfermedad">Agregar Enfermedad de Base</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col 12" id="enfermedades_seleccionadas">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s6">
+                <button class="btn blue darken-4" id="guardar">
+                    Guardar
+                </button>
+            </div>
+            <div class="col s6">
+                <button class="btn red darken-4" id="cancelar">
+                    Cancelar
+                </button>
             </div>
         </div>
     </div>
