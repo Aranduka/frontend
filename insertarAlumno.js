@@ -341,6 +341,7 @@ const insertar_alumno = async (params) => {
     const datos = await respuesta.json();
     if (!respuesta.ok) {
         alert("Error al intentar agregar alumno");
+        console.log(datos.detail);
     }else{
         alert("Se ha insertado al alumno: " + form_nombre.value);
     }
