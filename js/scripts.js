@@ -39,7 +39,7 @@ const login = async () => {
   }
   else{
     localStorage.setItem('token', datos.access_token);
-    window.location = "/home.html";
+    window.location = "/html/home.html";
   }
 
 };
