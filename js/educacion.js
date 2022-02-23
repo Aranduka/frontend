@@ -9,9 +9,6 @@ if (!localStorage.getItem("token")) {
 
 document.addEventListener("DOMContentLoaded", function () {
     cargar_titulo();
-    $('#datepicker').datepicker({
-        
-    });
 });
 
 const cargar_titulo = () => {
@@ -21,20 +18,98 @@ const cargar_titulo = () => {
       return elem;
     }
   });
-  const titulo = document.getElementById("sucursal");
-  titulo.innerHTML = `${nombre_sucursal[0].descripcion}`;
+  const titulo =  document.getElementById("sucursal");
+  titulo.innerHTML = "Titulo Ejemplo"//`${nombre_sucursal[0].descripcion}`;
 };
 
-// seleccionar boton y espacio
-const btn_agregar_tutor = document.getElementById("add_tutor");
 const container_form = document.getElementById("contenedor");
 
-btn_agregar_tutor.addEventListener("click", function(){
-    container_form.innerHTML = form_html;
+// Tutor
+const btn_agregar_tutor = document.getElementById("add_tutor");
+//Alumno
+const btn_agregar_alumno = document.getElementById("add_alumno");
+
+let lista_sacramentos_seleccionados = [];
+
+const nuevo_alumno = {}
+// Carga la segunda parte del formulario de alumnos
+btn_agregar_alumno.addEventListener("click", function(){
+  container_form.innerHTML = form_add_alumno_part_1;
+  $('#datepicker').datepicker({
+    language: 'es',
+    format: 'yyyy-mm-dd'
+  });
+  const btn_siguiente = document.getElementById("siguiente_alumno");
+  const cbo_nacionalidad = document.getElementById("nacionalidad_alumno");
+  const txt_cedula_tutor = document.getElementById("cedula_tutor");
+  txt_cedula_tutor.onblur = ()=>{
+    console.log("adiosss");
+  };
+  btn_siguiente.onclick = ()=>{
+    const rdb_femenino = document.getElementById("femenino");
+    const rdb_masculino = document.getElementById("masculino"); 
+    let sexo = "";
+    if (rdb_femenino.checked){
+      sexo = rdb_femenino.value;
+    }
+    else{
+      sexo = rdb_masculino.value;
+    }
+    nuevo_alumno.nombre_alumno = document.getElementById("nombre_alumno").value;
+    nuevo_alumno.apellido_alumno = document.getElementById("apellido_alumno").value;
+    nuevo_alumno.cedula_alumno = document.getElementById("cedula_alumno").value;
+    nuevo_alumno.telefono_alumno = document.getElementById("telefono_alumno").value;
+    nuevo_alumno.direccion_alumno = document.getElementById("direccion_alumno").value;
+    nuevo_alumno.id_nacionalidad = document.getElementById("nacionalidad_alumno").value;
+    nuevo_alumno.descripcion_nacionalidad = cbo_nacionalidad.options[cbo_nacionalidad.selectedIndex].text;
+    nuevo_alumno.cedula_tutor = txt_cedula_tutor.value;
+    nuevo_alumno.sexo = sexo;
+    nuevo_alumno.fecha_nacimiento = document.getElementById("datepicker").value;
+    // Carga parte 2 del formulario
+    container_form.innerHTML = form_add_alumno_part_2;
+    const cbo_sacramentos = document.getElementById("sacramentos");
+    const cbo_enfermedades = document.getElementById("enfermedades");
+    const cbo_alergias = document.getElementById("alergias");
+    const lista_sacramentos = document.getElementById("lista_sacramentos");
+    const lista_alergias = document.getElementById("lista_alergias");
+    const lista_enfermedades = document.getElementById("lista_enfermedades");
+    const btn_add_sacramento = document.getElementById("add_sacramento");
+    const btn_add_alergia = document.getElementById("add_alergia");
+    const btn_add_enfermedad = document.getElementById("add_enfermedad");
+    
+    btn_add_sacramento.onclick = ()=>{
+      let indice = cbo_sacramentos.value;
+      let chip = cbo_sacramentos.options[cbo_sacramentos.selectedIndex].text;
+      crear_chip(indice, chip, lista_sacramentos);
+      lista_sacramentos_seleccionados.push(cbo_sacramentos.value);
+    };
+  };
 });
 
-// html a ser insertado
-const form_html = `<h2 id="titulo-form">Agregar Tutor</h2>
+
+const crear_chip = (indice, chip, lista)=>{
+  let nuevo_chip = document.createElement("div");
+  nuevo_chip.id = `chip_${chip}_${indice}`;
+  nuevo_chip.classList.add("chip-form");
+  nuevo_chip.innerHTML = `${chip} <span style="cursor: pointer;" id="id_chip${chip}_${indice}"><b>X</b></span>`;
+  lista.appendChild(nuevo_chip);
+  const eliminar_chip = document.getElementById(`id_chip${chip}_${indice}`);
+  eliminar_chip.onclick = () => {remove_chip()};
+}
+
+const remove_chip = ()=>{
+  console.log("Eliminando");
+};
+
+btn_agregar_tutor.addEventListener("click", function(){
+    container_form.innerHTML = form_add_tutor;
+
+});
+
+
+// html insertar tutor
+const form_add_tutor = `
+<h2 id="titulo-form">Agregar Tutor</h2>
 <div class="form-row col-8">
   <div class="mb-3 col-4">
     <label for="nombre_tutor" class="form-label">Nombre</label>
@@ -42,7 +117,7 @@ const form_html = `<h2 id="titulo-form">Agregar Tutor</h2>
   </div>
   <div class="mb-3 col-4">
     <label for="apellido_tutor" class="form-label">Apellido</label>
-    <input type="password" class="form-control" id="apellido_tutor">
+    <input type="text" class="form-control" id="apellido_tutor">
   </div>
 </div>
 <div class="form-row col-8">
@@ -52,7 +127,7 @@ const form_html = `<h2 id="titulo-form">Agregar Tutor</h2>
   </div>
   <div class="mb-3 col-4">
     <label for="telefono_tutor" class="form-label">Telefono</label>
-    <input type="password" class="form-control" id="telefono_tutor">
+    <input type="text" class="form-control" id="telefono_tutor">
   </div>
 </div>
 <div class="form-row col-8">
@@ -99,8 +174,178 @@ const form_html = `<h2 id="titulo-form">Agregar Tutor</h2>
   </div>
 </div>
 <div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="date" class="form-label">Fecha de Nacimiento</label>
+    <input type='text' class="form-control" id='datepicker'/>
+  </div>
+</div>
+<div class="form-row col-8 py-3">
   <button class="btn btn-primary col-2">Guardar</button>
   <button class="btn btn-danger col-2">Cancelar</button>
-</div>`;
+</div>
+`;
+
+// html insertar alumno parte 1
+const form_add_alumno_part_1 = `
+<h2 id="titulo-form">Agregar Alumno</h2>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="nombre_alumno" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="nombre_alumno">
+  </div>
+  <div class="mb-3 col-4">
+    <label for="apellido_alumno" class="form-label">Apellido</label>
+    <input type="text" class="form-control" id="apellido_alumno">
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="cedula_alumno" class="form-label">Cedula</label>
+    <input type="text" class="form-control" id="cedula_alumno">
+  </div>
+  <div class="mb-3 col-4">
+    <label for="telefono_alumno" class="form-label">Telefono</label>
+    <input type="text" class="form-control" id="telefono_alumno">
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="direccion_alumno" class="form-label">Direccion</label>
+    <input type="text" class="form-control" id="direccion_alumno">
+  </div>
+  <div class="mb-3 col-4">
+    <label for="nacionalidad_alumno" class="form-label">Nacionalidad</label>
+    <select class="form-select" aria-label="Default select example" id="nacionalidad_alumno">
+      <option value="1">Paraguaya</option>
+      <option value="2">Argentina</option>
+      <option value="3">Brasileña</option>
+    </select>
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="sexo_alumno" class="form-label">Sexo</label>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="sexo" id="masculino" value="M">
+      <label class="form-check-label" for="masculino">
+        Masculino
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="sexo" id="femenino" value="F">
+      <label class="form-check-label" for="femenino">
+        Femenino
+      </label>
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="cedula_tutor" class="form-label">Cedula del Tutor</label>
+    <input type="text" class="form-control" id="cedula_tutor">
+  </div>
+  <div class="mb-3 col-4">
+    <label for="date" class="form-label">Fecha de Nacimiento</label>
+    <input type='text' class="form-control" id='datepicker'/>
+  </div>
+</div>
+<div class="form-row col-8 py-3">
+  <button class="btn btn-primary col-2" id="siguiente_alumno">Siguiente -></button>
+</div>
+`;
+
+// html insertar alumno parte 2
+const form_add_alumno_part_2 = `
+<h2 id="titulo-form">Agregar Alumno</h2>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="sacramentos" class="form-label">Sacramentos</label>
+    <select class="form-select" aria-label="Default select example" id="sacramentos">
+      <option value="1">Ninguno</option>
+      <option value="2">Bautismo</option>
+      <option value="3">Eucaristia</option>
+      <option value="4">Confirmacion</option>
+    </select>
+    <div id="lista_sacramentos" class="form-row">
+      
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    <button class="btn btn-secondary add-btn" id="add_sacramento">Agregar sacramento</button>
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="enfermedades" class="form-label">Enfermedades de Base</label>
+    <select class="form-select" aria-label="Default select example" id="enfermedades">
+    </select>
+    <div id="lista_enfermedades" class="form-row">
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    <button class="btn btn-secondary add-btn" id="add_enfermedad">Agregar enfermedad base</button>
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="alergias" class="form-label">Alergias</label>
+    <select class="form-select" aria-label="Default select example" id="alergias">
+    </select>
+    <div id="lista_alergias" class="form-row">
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    <button class="btn btn-secondary add-btn" id="add_alergia">Agregar alergia</button>
+  </div>
+</div>
+<br>
+<br>
+
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="chk_religion">
+      <label class="form-check-label" for="chk_religion">
+        Profesa Religion Catolica?
+      </label>
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="chk_vacunacion">
+      <label class="form-check-label" for="chk_vacunacion">
+        Presento Certificado de Vacunación?
+      </label>
+    </div>
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="chk_visado">
+      <label class="form-check-label" for="chk_visado">
+        Presento Certificado de Educacion Visado?
+      </label>
+    </div>
+  </div>
+  <div class="mb-3 col-4">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="chk_nacimiento">
+      <label class="form-check-label" for="chk_nacimiento">
+        Presento Certificado de Nacimiento?
+      </label>
+    </div>
+  </div>
+</div>
+<div class="form-row col-8">
+  <div class="form-row col-8 py-3">
+    <button class="btn btn-primary col-2">Guardar</button>
+    <button class="btn btn-danger col-2">Cancelar</button>
+  </div>
+</div>
+`;
 
 

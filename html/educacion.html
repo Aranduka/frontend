@@ -38,9 +38,9 @@
                   </h2>
                   <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                      <a class="links-accordion"> - Agregar alumno</a> </br></br>
-                      <a class="links-accordion"> - Editar Alumno</a> </br></br>
-                      <a class="links-accordion"> - Inactivar Alumno</a> </br>
+                      <a class="links-accordion" id="add_alumno"> - Agregar Alumno</a> </br></br>
+                      <a class="links-accordion" id="edit_alumno"> - Editar Alumno</a> </br></br>
+                      <a class="links-accordion" id="remove_alumno"> - Inactivar Alumno</a> </br>
                     </div>
                   </div>
                 </div>
@@ -129,87 +129,7 @@
       </nav>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="contenedor-form col-12" id="contenedor">
-          <h2 id="titulo-form">Agregar Tutor</h2>
-<div class="form-row col-8">
-  <div class="mb-3 col-4">
-    <label for="nombre_tutor" class="form-label">Nombre</label>
-    <input type="text" class="form-control" id="nombre_tutor">
-  </div>
-  <div class="mb-3 col-4">
-    <label for="apellido_tutor" class="form-label">Apellido</label>
-    <input type="password" class="form-control" id="apellido_tutor">
-  </div>
-</div>
-<div class="form-row col-8">
-  <div class="mb-3 col-4">
-    <label for="cedula_tutor" class="form-label">Cedula</label>
-    <input type="text" class="form-control" id="cedula_tutor">
-  </div>
-  <div class="mb-3 col-4">
-    <label for="telefono_tutor" class="form-label">Telefono</label>
-    <input type="password" class="form-control" id="telefono_tutor">
-  </div>
-</div>
-<div class="form-row col-8">
-  <div class="mb-3 col-4">
-    <label for="direccion_tutor" class="form-label">Direccion</label>
-    <input type="text" class="form-control" id="direccion_tutor">
-  </div>
-  <div class="mb-3 col-4">
-    <label for="nacionalidad_tutor" class="form-label">Nacionalidad</label>
-    <select class="form-select" aria-label="Default select example" id="nacionalidad_tutor">
-      <option value="1">Paraguaya</option>
-      <option value="2">Argentina</option>
-      <option value="3">Brasileña</option>
-    </select>
-  </div>
-</div>
-<div class="form-row col-8">
-  <div class="mb-3 col-4">
-    <label for="nacionalidad_tutor" class="form-label">Sexo</label>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="sexo" id="masculino" value="M">
-      <label class="form-check-label" for="masculino">
-        Masculino
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="sexo" id="femenino" value="F">
-      <label class="form-check-label" for="femenino">
-        Femenino
-      </label>
-    </div>
-  </div>
-  <div class="mb-3 col-4">
-    <label for="nacionalidad_tutor" class="form-label">Parentezco</label>
-    <select class="form-select" aria-label="Default select example" id="nacionalidad_tutor">
-      <option value="1">Madre</option>
-      <option value="2">Padre</option>
-      <option value="3">Abuelo</option>
-      <option value="4">Abuela</option>
-      <option value="5">Primo</option>
-      <option value="6">Hermano</option>
-      <option value="7">Tutor</option>
-    </select>
-  </div>
-</div>
-<div class="form-row col-8">
-  <div class="mb-3 col-4">
-    <label for="date" class="form-label">Fecha de Nacimiento</label>
-      
-          <div class="input-group date" id="datepicker">
-              <input type="text" class="form-control">
-              <span class="input-group-append">
-                  
-              </span>
-          </div>
-      
-  </div>
-</div>
-<div class="form-row col-8">
-  <button class="btn btn-primary col-2">Guardar</button>
-  <button class="btn btn-danger col-2">Cancelar</button>
-</div>
+          
         </div>
       </main>
     </div>
@@ -221,7 +141,11 @@
       crossorigin="anonymous">
   </script>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.es.min.js" charset="UTF-8"></script> 
   <script src="../js/educacion.js"></script>
 </body>
 </html>
+<!-- <div class="chip-form">Eucaristia <span><b>X</b></span></div>
+                <div class="chip-form">Bautismo <span><b>X</b></span></div>
+         -->

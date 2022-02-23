@@ -119,3 +119,15 @@ body {
   #titulo-form{
       margin: 35px 35px;
   }
+
+  .add-btn{
+    margin-top: 28px;
+  }
+
+  .chip-form{
+    padding: 5px;
+    color: white; 
+    background-color: darkred; 
+    margin-top: 10px; 
+    border-radius: 10px;
+  }

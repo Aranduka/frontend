@@ -1,6 +1,9 @@
 const url_login = "http://localhost:8000/login";
 const url_usuarios = "http://localhost:8000/usuarios";
 
+document.addEventListener("DOMContentLoaded", function(){
+  localStorage.clear()
+});
 
 const username = document.getElementById("email");
 const password = document.getElementById("password");
