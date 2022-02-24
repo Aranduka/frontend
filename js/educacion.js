@@ -5,10 +5,16 @@ if (!localStorage.getItem("token")) {
   window.location = "/";
 }
 
+// URL 
+const URL_ALERGIAS = "http://localhost:8000/alergias";
+const URL_ENFERMEDADES = "http://localhost:8000/enfermedades";
+const URL_ALUMNOS = "http://localhost:8000/alumnos";
+const URL_TUTOR = "http://localhost:8000/encargados";
+
 // Iniciar la pagina
 
 document.addEventListener("DOMContentLoaded", function () {
-    cargar_titulo();
+  cargar_titulo();
 });
 
 const cargar_titulo = () => {
@@ -18,8 +24,8 @@ const cargar_titulo = () => {
       return elem;
     }
   });
-  const titulo =  document.getElementById("sucursal");
-  titulo.innerHTML = "Titulo Ejemplo"//`${nombre_sucursal[0].descripcion}`;
+  const titulo = document.getElementById("sucursal");
+  titulo.innerHTML = `${nombre_sucursal[0].descripcion}`;
 };
 
 const container_form = document.getElementById("contenedor");
@@ -30,29 +36,31 @@ const btn_agregar_tutor = document.getElementById("add_tutor");
 const btn_agregar_alumno = document.getElementById("add_alumno");
 
 let lista_sacramentos_seleccionados = [];
+let lista_alergias_seleccionadas = [];
+let lista_enfermedades_seleccionadas = [];
 
-const nuevo_alumno = {}
+const nuevo_alumno = {};
 // Carga la segunda parte del formulario de alumnos
-btn_agregar_alumno.addEventListener("click", function(){
+btn_agregar_alumno.addEventListener("click", function () {
   container_form.innerHTML = form_add_alumno_part_1;
-  $('#datepicker').datepicker({
-    language: 'es',
-    format: 'yyyy-mm-dd'
+  $("#datepicker").datepicker({
+    language: "es",
+    format: "yyyy-mm-dd",
   });
   const btn_siguiente = document.getElementById("siguiente_alumno");
   const cbo_nacionalidad = document.getElementById("nacionalidad_alumno");
   const txt_cedula_tutor = document.getElementById("cedula_tutor");
-  txt_cedula_tutor.onblur = ()=>{
-    console.log("adiosss");
+  txt_cedula_tutor.onblur = () => {
+    nuevo_alumno.cedula_tutor = txt_cedula_tutor.value;
+    buscar_tutor();
   };
-  btn_siguiente.onclick = ()=>{
+  btn_siguiente.onclick = () => {
     const rdb_femenino = document.getElementById("femenino");
-    const rdb_masculino = document.getElementById("masculino"); 
+    const rdb_masculino = document.getElementById("masculino");
     let sexo = "";
-    if (rdb_femenino.checked){
+    if (rdb_femenino.checked) {
       sexo = rdb_femenino.value;
-    }
-    else{
+    } else {
       sexo = rdb_masculino.value;
     }
     nuevo_alumno.nombre_alumno = document.getElementById("nombre_alumno").value;
@@ -76,36 +84,199 @@ btn_agregar_alumno.addEventListener("click", function(){
     const btn_add_sacramento = document.getElementById("add_sacramento");
     const btn_add_alergia = document.getElementById("add_alergia");
     const btn_add_enfermedad = document.getElementById("add_enfermedad");
+
+    cbo_alergias.onmouseover = async ()=>{
+      
+      const solicitud = new Request(URL_ALERGIAS, {
+        method: "Get",
+        withCredentials: true,
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+      const respuesta = await fetch(solicitud);
+      const datos = await respuesta.json();
     
-    btn_add_sacramento.onclick = ()=>{
+      if(!respuesta.ok){
+          alert("Algo salio mal al cargar las alergias");
+      }
+      else{
+          for (let dato of datos) {
+              let nueva_opcion = document.createElement("option");
+              nueva_opcion.value = dato.id_alergia;
+              nueva_opcion.text = dato.descripcion;
+              cbo_alergias.appendChild(nueva_opcion);
+            }
+      }
+      
+    };
+
+    cbo_enfermedades.onmouseover = async ()=>{
+      const solicitud = new Request(URL_ENFERMEDADES, {
+        method: "Get",
+        withCredentials: true,
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+      const respuesta = await fetch(solicitud);
+      const datos = await respuesta.json();
+    
+      if(!respuesta.ok){
+          alert("Algo salio mal al cargar las enfermedades");
+      }
+      else{
+          for (let dato of datos) {
+              let nueva_opcion = document.createElement("option");
+              nueva_opcion.value = dato.id_enfermedad;
+              nueva_opcion.text = dato.descripcion;
+              cbo_enfermedades.appendChild(nueva_opcion);
+            }
+      }
+    }
+    
+
+    btn_add_sacramento.onclick = () => {
       let indice = cbo_sacramentos.value;
       let chip = cbo_sacramentos.options[cbo_sacramentos.selectedIndex].text;
-      crear_chip(indice, chip, lista_sacramentos);
+      crear_chip(indice, chip, lista_sacramentos, lista_sacramentos_seleccionados);
       lista_sacramentos_seleccionados.push(cbo_sacramentos.value);
+    };
+
+    btn_add_alergia.onclick = () => {
+      let indice = cbo_alergias.value;
+      let chip = cbo_alergias.options[cbo_alergias.selectedIndex].text;
+      crear_chip(indice, chip, lista_alergias, lista_alergias_seleccionadas);
+      lista_alergias_seleccionadas.push(cbo_alergias.value);
+    };
+
+    btn_add_enfermedad.onclick = async () => {
+      let indice = cbo_enfermedades.value;
+      let chip = cbo_enfermedades.options[cbo_enfermedades.selectedIndex].text;
+      crear_chip(indice, chip, lista_enfermedades, lista_enfermedades_seleccionadas);
+      lista_enfermedades_seleccionadas.push(cbo_enfermedades.value);
+    };
+
+    const btn_guardar_alumno = document.getElementById("guardar_alumno");
+    const btn_cancelar_alumno = document.getElementById("cancelar_alumno");
+
+    btn_guardar_alumno.onclick = () => {
+      let sacra = lista_sacramentos_seleccionados.filter((item, index) => {
+        return lista_sacramentos_seleccionados.indexOf(item) === index;
+      });
+      let aler = lista_alergias_seleccionadas.filter((item, index) => {
+        return lista_alergias_seleccionadas.indexOf(item) === index;
+      });
+      let enfer = lista_enfermedades_seleccionadas.filter((item, index) => {
+        return lista_alergias_seleccionadas.indexOf(item) === index;
+      });
+
+      const datos = {
+        nombre: nuevo_alumno.nombre_alumno,
+        apellido: nuevo_alumno.apellido_alumno,
+        cedula: nuevo_alumno.cedula_alumno,
+        fecha_nacimiento: nuevo_alumno.fecha_nacimiento,
+        sexo: nuevo_alumno.sexo,
+        nacionalidad: {
+          id_nacionalidad: nuevo_alumno.id_nacionalidad,
+          descripcion: nuevo_alumno.descripcion_nacionalidad
+        },
+        telefono: nuevo_alumno.telefono_alumno,
+        direccion: nuevo_alumno.direccion_alumno,
+        estado: "A",
+        profesa_religion_catolica: chk_religion.checked,
+        certificado_nacimiento: chk_nacimiento.checked,
+        libreta_vacunacion: chk_vacunacion.checked,
+        certificado_estudio_visado: chk_visado.checked,
+        id_encargado: nuevo_alumno.id_tutor,
+        id_enfermedades_base: enfer,
+        id_alergias: aler,
+        id_sacramentos: sacra
+      }
+      insertar_alumno(datos);
+    };
+
+
+    btn_cancelar_alumno.onclick = () => {
+      limpiar_campos();
     };
   };
 });
 
+const limpiar_campos = () => {
+  container_form.innerHTML = ""
+};
 
-const crear_chip = (indice, chip, lista)=>{
+const insertar_alumno = async (datos) => {
+  const solicitud = new Request(URL_ALUMNOS, {
+    method: 'Post',
+    withCredentials: true,
+    credentials: 'include',
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(datos)
+  });
+  const respuesta = await fetch(solicitud);
+  const data = await respuesta.json();
+  if (!respuesta.ok) {
+    alert("Error al intentar agregar alumno");
+    console.log(datos.detail);
+  }else{
+    alert("Se ha insertado al alumno: " + nuevo_alumno.nombre_alumno + " " + nuevo_alumno.apellido_alumno);
+  }
+}
+
+const crear_chip = (indice, chip, lista, items) => {
   let nuevo_chip = document.createElement("div");
   nuevo_chip.id = `chip_${chip}_${indice}`;
   nuevo_chip.classList.add("chip-form");
   nuevo_chip.innerHTML = `${chip} <span style="cursor: pointer;" id="id_chip${chip}_${indice}"><b>X</b></span>`;
   lista.appendChild(nuevo_chip);
   const eliminar_chip = document.getElementById(`id_chip${chip}_${indice}`);
-  eliminar_chip.onclick = () => {remove_chip()};
-}
-
-const remove_chip = ()=>{
-  console.log("Eliminando");
+  eliminar_chip.onclick = () => {
+    remove_chip(eliminar_chip, items);
+  };
 };
 
-btn_agregar_tutor.addEventListener("click", function(){
-    container_form.innerHTML = form_add_tutor;
+const remove_chip = (elemento, lista) => {
+  let padre = elemento.parentNode;
+  padre.remove();
+  let id = elemento.id;
+  let indice = lista.indexOf(id.substr(-1));
+  lista.splice(indice, indice+1);
+};
 
+// Control de tutor
+
+btn_agregar_tutor.addEventListener("click", function () {
+  container_form.innerHTML = form_add_tutor;
 });
 
+const buscar_tutor = async () => {
+  const solicitud = new Request(URL_TUTOR + "/" + nuevo_alumno.cedula_tutor, {
+    method: "Get",
+    withCredentials: true,
+    credentials: "include",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+      "Content-Type": "application/json",
+    },
+  });
+  const respuesta = await fetch(solicitud);
+  const datos = await respuesta.json();
+  if(!respuesta.ok){
+      alert(datos.detail);
+  }
+  else{
+      nuevo_alumno.id_tutor = datos.id_persona;
+  }
+}
 
 // html insertar tutor
 const form_add_tutor = `
@@ -342,10 +513,8 @@ const form_add_alumno_part_2 = `
 </div>
 <div class="form-row col-8">
   <div class="form-row col-8 py-3">
-    <button class="btn btn-primary col-2">Guardar</button>
-    <button class="btn btn-danger col-2">Cancelar</button>
+    <button class="btn btn-primary col-2" id="guardar_alumno">Guardar</button>
+    <button class="btn btn-danger col-2" id="cancelar_alumno">Cancelar</button>
   </div>
 </div>
 `;
-
-
