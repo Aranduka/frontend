@@ -207,7 +207,7 @@ btn_agregar_alumno.addEventListener("click", function () {
   };
 });
 
-const limpiar_campos = () => {
+const limpiar_campos = () => { 
   container_form.innerHTML = ""
 };
 
@@ -256,6 +256,53 @@ const remove_chip = (elemento, lista) => {
 
 btn_agregar_tutor.addEventListener("click", function () {
   container_form.innerHTML = form_add_tutor;
+  $("#datepicker").datepicker({
+    language: "es",
+    format: "yyyy-mm-dd",
+  });
+  const btn_cancelar_tutor = document.getElementById("cancelar_tutor");
+  btn_cancelar_tutor.onclick = () => {
+    limpiar_campos();
+  };
+  const nombre_tutor = document.getElementById("nombre_tutor");
+  const apellido_tutor = document.getElementById("apellido_tutor");
+  const cedula_tutor = document.getElementById("cedula_tutor");
+  const telefono_tutor = document.getElementById("telefono_tutor");
+  const direccion_tutor = document.getElementById("direccion_tutor");
+  const cbo_nacionalidad = document.getElementById("nacionalidad_tutor");
+  const rdb_femenino = document.getElementById("femenino");
+  const cbo_parentezco = document.getElementById("parentezco_tutor");
+  const fecha_nacimiento = document.getElementById("datepicker");
+  const btn_guardar_tutor = document.getElementById("guardar_tutor");
+  btn_guardar_tutor.onclick = () => {
+
+    let sexo = "";
+    if (rdb_femenino.checked) {
+      sexo = "F"
+    }else{
+      sexo = "M"
+    }
+
+    const datos = {
+      nombre: nombre_tutor.value,
+      apellido: apellido_tutor.value,
+      cedula: cedula_tutor.value,
+      fecha_nacimiento: fecha_nacimiento.value,
+      sexo: sexo,
+      nacionalidad: {
+        id_nacionalidad: cbo_nacionalidad.value,
+        descripcion: cbo_nacionalidad.options[cbo_nacionalidad.selectedIndex].text
+      },
+      telefono: telefono_tutor.value,
+      direccion: direccion_tutor.value,
+      estado: "A",
+      parentezco: {
+        id_parentezco: cbo_parentezco.value,
+        descripcion: cbo_parentezco.options[cbo_parentezco.selectedIndex].text
+      }
+    };
+    insertar_tutor(datos);
+  };
 });
 
 const buscar_tutor = async () => {
@@ -276,7 +323,29 @@ const buscar_tutor = async () => {
   else{
       nuevo_alumno.id_tutor = datos.id_persona;
   }
-}
+};
+
+const insertar_tutor = async (datos) =>{
+  console.log(datos);
+  const solicitud = new Request(URL_TUTOR, {
+    method: 'Post',
+    withCredentials: true,
+    credentials: 'include',
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(datos)
+    });
+    const respuesta = await fetch(solicitud);
+    const tutor = await respuesta.json();
+    if (!respuesta.ok) {
+        alert("Error al intentar agregar tutor");
+        console.log(tutor.detail);
+    }else{
+        alert("Se ha insertado al tutor: " + datos.nombre + " " + datos.apellido);
+    }
+};
 
 // html insertar tutor
 const form_add_tutor = `
@@ -333,7 +402,7 @@ const form_add_tutor = `
   </div>
   <div class="mb-3 col-4">
     <label for="nacionalidad_tutor" class="form-label">Parentezco</label>
-    <select class="form-select" aria-label="Default select example" id="nacionalidad_tutor">
+    <select class="form-select" aria-label="Default select example" id="parentezco_tutor">
       <option value="1">Madre</option>
       <option value="2">Padre</option>
       <option value="3">Abuelo</option>
@@ -351,8 +420,8 @@ const form_add_tutor = `
   </div>
 </div>
 <div class="form-row col-8 py-3">
-  <button class="btn btn-primary col-2">Guardar</button>
-  <button class="btn btn-danger col-2">Cancelar</button>
+  <button class="btn btn-primary col-2" id="guardar_tutor">Guardar</button>
+  <button class="btn btn-danger col-2" id="cancelar_tutor">Cancelar</button>
 </div>
 `;
 
