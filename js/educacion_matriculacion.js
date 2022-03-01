@@ -28,7 +28,9 @@ btn_inscribir.addEventListener("click", function(){
    };
 
    form_matricula.cbo_cursos.onmouseover = ()=>{
-    listar_cursos(localStorage.getItem("sucursal_elegida"), form_matricula);
+     if (form_matricula.cbo_cursos.options[0] === undefined){
+       listar_cursos(localStorage.getItem("sucursal_elegida"), form_matricula);
+     }
    }
 
    form_matricula.btn_cancelar_matriculacion.onclick = () => {
@@ -60,7 +62,6 @@ const listar_cursos = async (id, form) => {
         alert("Algo fallo al listar los cursos");
     }
     else {
-        
         for (let curso of cursos) {
             let nueva_opcion = document.createElement("option");
             nueva_opcion.value = curso.id_curso;

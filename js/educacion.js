@@ -81,70 +81,75 @@ btn_agregar_alumno.addEventListener("click", function () {
     const lista_sacramentos = document.getElementById("lista_sacramentos");
     const lista_alergias = document.getElementById("lista_alergias");
     const lista_enfermedades = document.getElementById("lista_enfermedades");
-    const btn_add_sacramento = document.getElementById("add_sacramento");
-    const btn_add_alergia = document.getElementById("add_alergia");
-    const btn_add_enfermedad = document.getElementById("add_enfermedad");
+    const btn_add_sacramento = document.getElementById("add_sacramento_alumno");
+    const btn_add_alergia = document.getElementById("add_alergia_alumno");
+    const btn_add_enfermedad = document.getElementById("add_enfermedad_alumno");
 
     cbo_alergias.onmouseover = async ()=>{
+      if (cbo_alergias.options[0]===undefined){
+
+        const solicitud = new Request(URL_ALERGIAS, {
+          method: "Get",
+          withCredentials: true,
+          credentials: "include",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        });
+        const respuesta = await fetch(solicitud);
+        const datos = await respuesta.json();
       
-      const solicitud = new Request(URL_ALERGIAS, {
-        method: "Get",
-        withCredentials: true,
-        credentials: "include",
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-          "Content-Type": "application/json",
-        },
-      });
-      const respuesta = await fetch(solicitud);
-      const datos = await respuesta.json();
-    
-      if(!respuesta.ok){
-          alert("Algo salio mal al cargar las alergias");
-      }
-      else{
-          for (let dato of datos) {
-              let nueva_opcion = document.createElement("option");
-              nueva_opcion.value = dato.id_alergia;
-              nueva_opcion.text = dato.descripcion;
-              cbo_alergias.appendChild(nueva_opcion);
-            }
+        if(!respuesta.ok){
+            alert("Algo salio mal al cargar las alergias");
+        }
+        else{
+            for (let dato of datos) {
+                let nueva_opcion = document.createElement("option");
+                nueva_opcion.value = dato.id_alergia;
+                nueva_opcion.text = dato.descripcion;
+                cbo_alergias.appendChild(nueva_opcion);
+              }
+        }
       }
       
     };
 
     cbo_enfermedades.onmouseover = async ()=>{
-      const solicitud = new Request(URL_ENFERMEDADES, {
-        method: "Get",
-        withCredentials: true,
-        credentials: "include",
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-          "Content-Type": "application/json",
-        },
-      });
-      const respuesta = await fetch(solicitud);
-      const datos = await respuesta.json();
-    
-      if(!respuesta.ok){
-          alert("Algo salio mal al cargar las enfermedades");
-      }
-      else{
-          for (let dato of datos) {
-              let nueva_opcion = document.createElement("option");
-              nueva_opcion.value = dato.id_enfermedad;
-              nueva_opcion.text = dato.descripcion;
-              cbo_enfermedades.appendChild(nueva_opcion);
-            }
-      }
-    }
-    
+      if (cbo_enfermedades.options[0]===undefined){
 
+        const solicitud = new Request(URL_ENFERMEDADES, {
+          method: "Get",
+          withCredentials: true,
+          credentials: "include",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        });
+        const respuesta = await fetch(solicitud);
+        const datos = await respuesta.json();
+      
+        if(!respuesta.ok){
+            alert("Algo salio mal al cargar las enfermedades");
+        }
+        else{
+            for (let dato of datos) {
+                let nueva_opcion = document.createElement("option");
+                nueva_opcion.value = dato.id_enfermedad;
+                nueva_opcion.text = dato.descripcion;
+                cbo_enfermedades.appendChild(nueva_opcion);
+              }
+        }
+      }
+    };
+    
     btn_add_sacramento.onclick = () => {
       let indice = cbo_sacramentos.value;
       let chip = cbo_sacramentos.options[cbo_sacramentos.selectedIndex].text;
       crear_chip(indice, chip, lista_sacramentos, lista_sacramentos_seleccionados);
       lista_sacramentos_seleccionados.push(cbo_sacramentos.value);
+      
     };
 
     btn_add_alergia.onclick = () => {
@@ -152,6 +157,7 @@ btn_agregar_alumno.addEventListener("click", function () {
       let chip = cbo_alergias.options[cbo_alergias.selectedIndex].text;
       crear_chip(indice, chip, lista_alergias, lista_alergias_seleccionadas);
       lista_alergias_seleccionadas.push(cbo_alergias.value);
+      
     };
 
     btn_add_enfermedad.onclick = async () => {
@@ -172,7 +178,7 @@ btn_agregar_alumno.addEventListener("click", function () {
         return lista_alergias_seleccionadas.indexOf(item) === index;
       });
       let enfer = lista_enfermedades_seleccionadas.filter((item, index) => {
-        return lista_alergias_seleccionadas.indexOf(item) === index;
+        return lista_enfermedades_seleccionadas.indexOf(item) === index;
       });
 
       const datos = {
@@ -230,18 +236,24 @@ const insertar_alumno = async (datos) => {
   }else{
     alert("Se ha insertado al alumno: " + nuevo_alumno.nombre_alumno + " " + nuevo_alumno.apellido_alumno);
   }
-}
+};
 
 const crear_chip = (indice, chip, lista, items) => {
-  let nuevo_chip = document.createElement("div");
-  nuevo_chip.id = `chip_${chip}_${indice}`;
-  nuevo_chip.classList.add("chip-form");
-  nuevo_chip.innerHTML = `${chip} <span style="cursor: pointer;" id="id_chip${chip}_${indice}"><b>X</b></span>`;
-  lista.appendChild(nuevo_chip);
-  const eliminar_chip = document.getElementById(`id_chip${chip}_${indice}`);
-  eliminar_chip.onclick = () => {
-    remove_chip(eliminar_chip, items);
-  };
+  let bandera = document.getElementById(`id_chip${chip}_${indice}`);
+  if (bandera === null){
+    let nuevo_chip = document.createElement("div");
+    nuevo_chip.id = `chip_${chip}_${indice}`;
+    nuevo_chip.classList.add("chip-form");
+    nuevo_chip.innerHTML = `${chip} <span style="cursor: pointer;" id="id_chip${chip}_${indice}"><b>X</b></span>`;
+    lista.appendChild(nuevo_chip);
+    const eliminar_chip = document.getElementById(`id_chip${chip}_${indice}`);
+    eliminar_chip.onclick = () => {
+      remove_chip(eliminar_chip, items);
+    };
+  }
+  else {
+    alert("Ya selecciono ese item");
+  }
 };
 
 const remove_chip = (elemento, lista) => {
@@ -403,13 +415,13 @@ const form_add_tutor = `
   <div class="mb-3 col-4">
     <label for="nacionalidad_tutor" class="form-label">Parentezco</label>
     <select class="form-select" aria-label="Default select example" id="parentezco_tutor">
-      <option value="1">Madre</option>
-      <option value="2">Padre</option>
-      <option value="3">Abuelo</option>
-      <option value="4">Abuela</option>
-      <option value="5">Primo</option>
-      <option value="6">Hermano</option>
-      <option value="7">Tutor</option>
+      <option value="18">Madre</option>
+      <option value="19">Padre</option>
+      <option value="20">Abuelo</option>
+      <option value="21">Abuela</option>
+      <option value="22">Primo</option>
+      <option value="23">Hermano</option>
+      <option value="24">Tutor</option>
     </select>
   </div>
 </div>
@@ -417,6 +429,9 @@ const form_add_tutor = `
   <div class="mb-3 col-4">
     <label for="date" class="form-label">Fecha de Nacimiento</label>
     <input type='text' class="form-control" id='datepicker'/>
+  </div>
+  <div class="mb-3 col-4">
+  
   </div>
 </div>
 <div class="form-row col-8 py-3">
@@ -514,7 +529,7 @@ const form_add_alumno_part_2 = `
     </div>
   </div>
   <div class="mb-3 col-4">
-    <button class="btn btn-secondary add-btn" id="add_sacramento">Agregar sacramento</button>
+    <button class="btn btn-secondary add-btn" id="add_sacramento_alumno">Agregar sacramento</button>
   </div>
 </div>
 <div class="form-row col-8">
@@ -526,7 +541,7 @@ const form_add_alumno_part_2 = `
     </div>
   </div>
   <div class="mb-3 col-4">
-    <button class="btn btn-secondary add-btn" id="add_enfermedad">Agregar enfermedad base</button>
+    <button class="btn btn-secondary add-btn" id="add_enfermedad_alumno">Agregar enfermedad base</button>
   </div>
 </div>
 <div class="form-row col-8">
@@ -538,7 +553,7 @@ const form_add_alumno_part_2 = `
     </div>
   </div>
   <div class="mb-3 col-4">
-    <button class="btn btn-secondary add-btn" id="add_alergia">Agregar alergia</button>
+    <button class="btn btn-secondary add-btn" id="add_alergia_alumno">Agregar alergia</button>
   </div>
 </div>
 <br>
