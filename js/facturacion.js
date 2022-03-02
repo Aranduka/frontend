@@ -6,19 +6,12 @@ if (!localStorage.getItem("token")) {
 }
 
 URL_SET = "http://localhost:8000/set";
-URL_TALONARIO = "http://localhost:8000/talonarios"
+URL_TALONARIO = "http://localhost:8000/talonarios";
 URL_SIGUIENTE_NUMERO = "http://localhost:8000/siguienteNumero";
 URL_CLIENTES = "http://localhost:8000/clientes";
+URL_DESCUENTOS = "http://localhost:8000/descuentos";
+URL_PAGARES = "http://localhost:8000/pagares_cuotas";
 
-
-const btn_agregar_detalle_cuota = document.getElementById("agregar_cuota");
-btn_agregar_detalle_cuota.addEventListener("click", function(){
-  $('#detalle_modal').modal('show');
-}); 
-const btn_cerrar_detalle_modal = document.getElementById("cerrar_detalle_modal");
-btn_cerrar_detalle_modal.addEventListener("click", function(){
-  $('#detalle_modal').modal('hide');
-});
 
 document.addEventListener("DOMContentLoaded", function () {
     cargar_titulo();
@@ -50,8 +43,86 @@ facturas_cuotas.addEventListener("click", function(){
         cliente_direccion: document.getElementById("cliente_direccion"),
         cliente_ruc: document.getElementById("cliente_ruc"),
         cliente_id: "",
-        fecha: document.getElementById("fecha_cliente")
+        fecha: document.getElementById("fecha_cliente"),
+        btn_agregar_detalle_cuota: document.getElementById("agregar_cuota"),
+        btn_cerrar_detalle_modal: document.getElementById("cerrar_detalle_modal"),
+        btn_agregar_detalle_cuota_modal: document.getElementById("agregar_detalle_curso")
     };
+    const datos_detalle = {
+      cedula_alumno_cuota: document.getElementById("cedula_alumno"),
+      btn_buscar_alumno: document.getElementById("buscar_cuotas"),
+      cbo_pagares: document.getElementById("pagares_cuotas"),
+      cbo_descuento: document.getElementById("descuento_cuota"),
+      descripcion_cuota: document.getElementById("descripcion_cuota"),
+      monto_cuota: document.getElementById("monto_cuota"),
+      cuerpo: document.getElementById("detalle_contenedor"),
+      contador: 1
+    }
+
+    datos_detalle.btn_buscar_alumno.onclick = async ()=>{
+      if(datos_detalle.cbo_pagares.options[0]===undefined){
+        const solicitud = new Request(URL_PAGARES+"/"+datos_detalle.cedula_alumno_cuota.value, {
+          method: "Get",
+          withCredentials: true,
+          credentials: "include",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        });
+        const respuesta = await fetch(solicitud);
+        const pagares_cuotas = await respuesta.json();
+      
+        if(!respuesta.ok){
+            alert("Algo salio mal al cargar los pagares");
+        }
+        else{
+            for (let dato of pagares_cuotas) {
+                let nueva_opcion = document.createElement("option");
+                nueva_opcion.value = dato.id_pagare;
+                nueva_opcion.text = `Cuota numero:${dato.numero_cuota} monto:${dato.monto}`;
+                datos_detalle.cbo_pagares.appendChild(nueva_opcion);
+              }
+        }
+      }
+    };
+
+    datos_detalle.cbo_descuento.onmouseover = async ()=>{
+      if(datos_detalle.cbo_descuento.options[0]===undefined){
+        const solicitud = new Request(URL_DESCUENTOS, {
+            method: "Get",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+              "Content-Type": "application/json",
+            },
+          });
+          const respuesta = await fetch(solicitud);
+          const descuento_cuota= await respuesta.json();
+        
+          if(!respuesta.ok){
+              alert("Algo salio mal al cargar los descuentos");
+          }
+          else{
+              for (let dato of descuento_cuota) {
+                  let nueva_opcion = document.createElement("option");
+                  nueva_opcion.value = dato.id_tipo_descuento;
+                  nueva_opcion.text = `${dato.porcentaje * 100}%`;
+                  datos_detalle.cbo_descuento.appendChild(nueva_opcion);
+                }
+          }
+      } 
+    };
+
+    datos_facturas_cuotas_dom.btn_agregar_detalle_cuota.onclick = () =>{
+      $('#detalle_modal').modal('show');
+    };
+
+    datos_facturas_cuotas_dom.btn_cerrar_detalle_modal.onclick = () => {
+      $('#detalle_modal').modal('hide');
+    };
+
     let fecha = new Date()
     datos_facturas_cuotas_dom.fecha.innerHTML = fecha.toISOString().split('T')[0];
     datos_facturas_cuotas_dom.txt_lista_cliente.onmouseover = async ()=>{
@@ -156,7 +227,30 @@ facturas_cuotas.addEventListener("click", function(){
           datos_facturas_cuotas_dom.cliente_telefono.innerHTML = cliente_unico_cuota.telefono;
       }
     };
+
+    
+    datos_facturas_cuotas_dom.btn_agregar_detalle_cuota_modal.onclick = () => {
+      let btn = insertar_detalle_cuota(datos_detalle);
+      $('#detalle_modal').modal('hide');
+      btn.onclick = ()=>{
+        btn.parentNode.parentNode.remove();
+      }
+    };
 });
+
+const insertar_detalle_cuota = (datos)=>{
+  datos.cuerpo.innerHTML += `<tr id="tr_${datos.contador}">
+  <th scope="row">${datos.descripcion_cuota.value}</th>
+  <td>${datos.cbo_descuento.options[datos.cbo_descuento.selectedIndex].text}</td>
+  <td>${datos.monto_cuota.value}</td>
+  <td><button class="btn btn-danger" id="detalle_linea_n_${datos.contador}">Eliminar</button></td>
+  </tr>`;
+  
+  const btn_eliminar_linea = document.getElementById(`detalle_linea_n_${datos.contador}`);
+  datos.contador+=1;
+  return btn_eliminar_linea;
+};
+
 
 const ultimo_numero_factura = async (id_talonario, datos)=>{
     const solicitud = new Request(URL_SIGUIENTE_NUMERO + "/"+ id_talonario, {
@@ -227,17 +321,84 @@ const form_factura_sineldetallemodal = `<h2 id="titulo-form">Facturar Cuotas</h2
     </div>
   </div>
 </div>
-<hr>
-<div id="detalle_contenedor" class="">
+
+<div id="detalle_table_contenedor" class="col-10">
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Descripcion</th>
+        <th scope="col">Descuento</th>
+        <th scope="col">Monto</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody id="detalle_contenedor">
+      
+    </tbody>
+  </table>
 
 </div>
-<hr>
+
+
 <div class="form-row col-9">
   <div class="col-4"> 
-    <button class="btn btn-primary">Agregar cuota</button>
+    <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar cuota</button>
   </div>
 </div>
-<hr style="background-color: black;">
+<!-- Modal  -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="detalle_modal">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Busqueda de Cuotas</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrar_detalle_modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="form-row col-12" style="justify-content: space-around;">
+            <div class="mb-3 col-4">
+              <label for="cedula_alumno" class="form-label">Cedula</label>
+              <input type="text" class="form-control" id="cedula_alumno">
+            </div>
+            <div class="mb-3 col-4">
+              <button class="btn btn-secondary add-btn" id="buscar_cuotas">Buscar cuotas</button>
+            </div>
+          </div>
+          <div class="form-row col-12" style="justify-content: space-around;">
+            <div class="mb-3 col-4">
+              <label for="pagares_cuotas" class="form-label">Lista de cuotas</label>
+              <select class="form-select" aria-label="Default select example" id="pagares_cuotas">
+              </select>
+            </div>
+            <div class="mb-3 col-4">
+              <label for="descuento_cuota" class="form-label">Descuento</label>
+              <select class="form-select" aria-label="Default select example" id="descuento_cuota">
+              </select>
+            </div>
+          </div>
+          <div class="form-row col-12" style="justify-content: space-around;">
+            <div class="mb-3 col-4">
+              <label for="descripcion_cuota" class="form-label">Descripcion</label>
+              <input type="text" class="form-control" id="descripcion_cuota">
+            </div>
+            <div class="mb-3 col-4">
+              <label for="monto_cuota" class="form-label">Monto Abonado</label>
+              <input type="text" class="form-control" id="monto_cuota">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="agregar_detalle_curso">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--  -->
+<hr>
 <div class="form-row col-10" style="margin-top: 60px; margin-left: 1000px;">
   <div class="col-2"> 
     <button class="btn btn-primary">Guardar</button>

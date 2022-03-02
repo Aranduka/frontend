@@ -116,128 +116,7 @@
       </nav>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="contenedor-form col-12" id="contenedor">
-          <h2 id="titulo-form">Facturar Cuotas</h2>
-<div class="col-8">
-<label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
-  <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">
-  <datalist id="lista_clientes">
-   
-  </datalist>
-</div>
-<input type="hidden" id="cliente_id">
-<div class="col-12 form-row">
-  <div class="col-7 factura-info">
-    <div class="form-row col-12 datos-text" >
-      <div class="col-6">Fecha: <span id="fecha_cliente"></span></div>
-      <div class="form-check col-6">
-        <label class="form-check-label" for="chk_contado">
-          Contado
-        </label>
-        <input class="form-check-input" type="checkbox" value="E" id="chk_contado" checked disabled>
-      </div>
-    </div>
-    <div class="form-row col-12 datos-text">
-      <div class="col-6">Cliente: <span id="cliente_nombre"></span></div>
-      <div class="col-6">Telefono: <span id="cliente_telefono"></span></div>
-    </div>
-    <div class="form-row col-12 datos-text">
-      <div class="col-6">RUC: <span id="cliente_ruc"></span></div>
-      <div class="col-6">Direccion: <span id="cliente_direccion"></span></div>
-    </div>
-  </div>
-  <div class="col-4 factura-info">
-    <div class="form-row col-12">
-      <div class="col-6" style="margin-top: 20px; margin-left: 90px;">
-        <label for="punto_expedicion_factura" class="form-label">Punto Expedicion</label>
-        <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
           
-        </select>
-        <input type="hidden" id="id_codigo_set">
-      </div>
-    </div>
-    <div class="form-row col-12">
-      <div class="col-6" style="margin-top: 20px; margin-left: 120px; font-size: 20px;">
-        Factura N°: <span id="numero_factura">2000</span>
-      </div>
-    </div>
-  </div>
-</div>
-<hr>
-<div id="detalle_contenedor">
-
-</div>
-<hr>
-
-<div class="form-row col-9">
-  <div class="col-4"> 
-    <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar cuota</button>
-  </div>
-</div>
-<!-- Modal  -->
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="detalle_modal">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Busqueda de Cuotas</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrar_detalle_modal">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div>
-          <div class="form-row col-12" style="justify-content: space-around;">
-            <div class="mb-3 col-4">
-              <label for="cedula_alumno" class="form-label">Cedula</label>
-              <input type="text" class="form-control" id="cedula_alumno">
-            </div>
-            <div class="mb-3 col-4">
-              <button class="btn btn-secondary add-btn" id="buscar_cuotas">Buscar cuotas</button>
-            </div>
-          </div>
-          <div class="form-row col-12" style="justify-content: space-around;">
-            <div class="mb-3 col-4">
-              <label for="pagares_cuotas" class="form-label">Lista de cuotas</label>
-              <select class="form-select" aria-label="Default select example" id="pagares_cuotas">
-              </select>
-            </div>
-            <div class="mb-3 col-4">
-              <label for="descuento_cuota" class="form-label">Descuento</label>
-              <select class="form-select" aria-label="Default select example" id="descuento_cuota">
-              </select>
-            </div>
-          </div>
-          <div class="form-row col-12" style="justify-content: space-around;">
-            <div class="mb-3 col-4">
-              <label for="impuesto_cuota" class="form-label">Impuesto</label>
-              <select class="form-select" aria-label="Default select example" id="impuesto_cuota">
-              </select>
-            </div>
-            <div class="mb-3 col-4">
-              <label for="monto_cuota" class="form-label">Monto Abonado</label>
-              <input type="text" class="form-control" id="monto_cuota">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="agregar_detalle_curso">Agregar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!--  -->
-<hr>
-<div class="form-row col-10" style="margin-top: 60px; margin-left: 1000px;">
-  <div class="col-2"> 
-    <button class="btn btn-primary">Guardar</button>
-  </div>
-  <div class="col-2" id="btn_imprimir"> 
-    <!-- <button class="btn btn-primary">Imprimir</button> -->
-  </div>
-  <div class="col-2"> 
-    <button class="btn btn-primary">Cancelar</button>
-  </div>
-</div>
         </div>
       </main>
     </div>
@@ -254,3 +133,21 @@
   <script src="../js/facturacion.js"></script>
 </body>
 </html>
+<!-- <tr>
+  <th scope="row">Cuota mes de Marzo</th>
+  <td>25%</td>
+  <td>400000</td>
+  <td><button class="btn btn-danger">Eliminar</button></td>
+</tr>
+<tr>
+  <th scope="row">Cuota mes de Abril</th>
+  <td>0%</td>
+  <td>400000</td>
+  <td><button class="btn btn-danger">Eliminar</button></td>
+</tr>
+<tr>
+  <th scope="row">Parte de pago cuota mayo</th>
+  <td>50%</td>
+  <td>200000</td>
+  <td><button class="btn btn-danger">Eliminar</button></td>
+</tr> -->
