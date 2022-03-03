@@ -246,7 +246,7 @@ const insertar_detalle_cuota = (datos)=>{
   <td><button class="btn btn-danger" id="detalle_linea_n_${datos.contador}">Eliminar</button></td>
   </tr>`;
   
-  const btn_eliminar_linea = document.getElementById(`detalle_linea_n_${datos.contador}`);
+  let btn_eliminar_linea = document.getElementById(`detalle_linea_n_${datos.contador}`);
   datos.contador+=1;
   return btn_eliminar_linea;
 };
@@ -275,7 +275,7 @@ const ultimo_numero_factura = async (id_talonario, datos)=>{
 };
 
 
-const form_factura_sineldetallemodal = `<h2 id="titulo-form">Facturar Cuotas</h2>
+const form_factura_sineldetallemodal = `
 <div class="col-8">
 <label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
   <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">

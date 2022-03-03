@@ -111,8 +111,13 @@ body {
     align-items: center;
   }
 
-  .form-row{
-    display: flex;
+.form-row{
+  display: flex;
+}
+
+.form-row-fac{
+  display: flex;
+  justify-content: space-around;
 }
 
 .factura-info{
@@ -130,4 +135,7 @@ body {
 
 .add-btn{
   margin-top: 28px;
+}
+#titulo-form{
+  margin: 35px 35px;
 }

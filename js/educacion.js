@@ -338,7 +338,7 @@ const buscar_tutor = async () => {
 };
 
 const insertar_tutor = async (datos) =>{
-  console.log(datos);
+  
   const solicitud = new Request(URL_TUTOR, {
     method: 'Post',
     withCredentials: true,

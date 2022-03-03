@@ -17,7 +17,7 @@ btn_add_curso.addEventListener("click", function(){
         btn_guardar_curso: document.getElementById("guardar_curso"),
         btn_cancelar_curso: document.getElementById("cancelar_curso"),
         chips_container: document.getElementById("chips_materia_container")
-    }
+    };
 
     agregar_curso.cbo_materia.onmouseover = async ()=>{
         if (agregar_curso.cbo_materia.options[0]===undefined){
