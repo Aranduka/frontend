@@ -228,25 +228,27 @@ facturas_cuotas.addEventListener("click", function(){
       }
     };
 
-    
     datos_facturas_cuotas_dom.btn_agregar_detalle_cuota_modal.onclick = () => {
       let btn = insertar_detalle_cuota(datos_detalle);
+      let fila = document.getElementsByClassName("fila_detalle");
       $('#detalle_modal').modal('hide');
-      btn.onclick = ()=>{
-        btn.parentNode.parentNode.remove();
+      for (let i = 0; btn.length > i; i++){
+        btn[i].onclick = ()=>{
+          fila[i].remove();
+        }
       }
     };
 });
 
 const insertar_detalle_cuota = (datos)=>{
-  datos.cuerpo.innerHTML += `<tr id="tr_${datos.contador}">
+  datos.cuerpo.innerHTML += `<tr class="fila_detalle">
   <th scope="row">${datos.descripcion_cuota.value}</th>
   <td>${datos.cbo_descuento.options[datos.cbo_descuento.selectedIndex].text}</td>
   <td>${datos.monto_cuota.value}</td>
-  <td><button class="btn btn-danger" id="detalle_linea_n_${datos.contador}">Eliminar</button></td>
+  <td><button class="btn btn-danger eliminar_detalle">Eliminar</button></td>
   </tr>`;
   
-  let btn_eliminar_linea = document.getElementById(`detalle_linea_n_${datos.contador}`);
+  let btn_eliminar_linea = document.getElementsByClassName("eliminar_detalle");
   datos.contador+=1;
   return btn_eliminar_linea;
 };
