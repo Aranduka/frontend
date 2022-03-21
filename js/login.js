@@ -41,7 +41,6 @@ const login = async () => {
     localStorage.removeItem('token');
   }
   else{
-    alert(datos)
     let texto = JSON.stringify(datos.sucursales);
     localStorage.setItem('token', datos.access_token);
     localStorage.setItem('sucursales', texto);

@@ -1,6 +1,7 @@
 // URL
 let url_facturacion_producto = "http://localhost:8000/factura_efectivo";
 const URL_PAGARES_PRODUCTOS = "http://localhost:8000/pagares";
+const URL_PRODUCTOS = "http://localhost:8000/productos_sucursal";
 
 // Objeto para insertar la nueva factura
 const factura_productos_item = {
@@ -19,6 +20,24 @@ const factura_productos_item = {
     detalle_pagare: []
 }
 
+const detalle = {
+  descuento: {
+    id_descuento: null,
+    descripcion: null,
+    porcentaje: null
+  },
+  impuesto: {
+    id_impuesto: null,
+    descripcion: null,
+    procentaje: null
+  },
+  precio: null,
+  cantidad: null,
+  id_producto: null
+};
+
+const detalles = {};
+
 
 
 // Opcion del dropdown para facturar productos
@@ -32,6 +51,7 @@ opcion_dropdown.addEventListener("click", function(){
     // objeto que guarda todos los componentes de la factura
     const factura_productos = {
         id_cliente: "",
+        id_talonario: "",
         id_usuario: localStorage.getItem("id_usuario"),
         id_sucursal: localStorage.getItem("sucursal_elegida"),
         txt_fecha: document.getElementById("fecha_cliente"),
@@ -54,34 +74,41 @@ opcion_dropdown.addEventListener("click", function(){
         btn_imprimir: document.getElementById("imprimir"),
         btn_cancelar: document.getElementById("cancelar"),
         btn_cerrar_detalle_modal: document.getElementById("cerrar_detalle_modal"),
-        btn_agregar_detalle_cuota_modal: document.getElementById("agregar_detalle_curso"),
+        btn_agregar_detalle_producto_modal: document.getElementById("agregar_detalle_producto"),
         contenedor_cantidad: document.getElementById("opciones_extra_credito"),
         conetendor_cheque: document.getElementById("opciones_extra_cheque")
     }
 
     // objeto que guarda todos los componentes del detalle de la factura
     const detalle_factura = {
-        txt_ruc_cliente_cuota: document.getElementById("cedula_alumno"),
-        btn_buscar_cliente: document.getElementById("buscar_cuotas"),
-        cbo_pagares: document.getElementById("pagares_cuotas"),
-        cbo_descuento: document.getElementById("descuento_cuota"),
-        txt_descripcion_cuota: document.getElementById("descripcion_cuota"),
-        txt_monto_cuota: document.getElementById("monto_cuota"),
+        lst_productos: document.getElementById("lst_productos"),
+        txt_producto: document.getElementById("producto"),
+        cbo_descuento: document.getElementById("descuento_producto"),
+        txt_precio: document.getElementById("precio"),
+        txt_cantidad: document.getElementById("cantidad_producto"),
+        txt_disponible: document.getElementById("disponible"),
+        id_descuento: 1,
+        txt_descuento: "Exenta",
+        txt_porcentaje_descuento: 0.0,
+        id_producto: "",
+        txt_id_impuesto: document.getElementById("id_impuesto"),
         cuerpo: document.getElementById("detalle_contenedor"),
     }
 
     // control modal apertura
     factura_productos.btn_agregar_cuota.onclick = () => {
-        let cbo_pagares = document.getElementById("pagares_cuotas");
-        cbo_pagares.innerHTML="";
-        let cbo_descuento = document.getElementById("descuento_cuota");
+        let txt_disponible = document.getElementById("disponible");
+        txt_disponible.value = "";
+        let txt_cantidad_producto = document.getElementById("cantidad_producto");
+        txt_cantidad_producto.value = "";
+        let txt_producto = document.getElementById("producto");
+        txt_producto.value = "";
+        let lst_productos = document.getElementById("lst_productos");
+        lst_productos.innerHTML = "";
+        let cbo_descuento = document.getElementById("descuento_producto");
         cbo_descuento.innerHTML="";
-        let descripcion_cuota = document.getElementById("descripcion_cuota");
-        descripcion_cuota.value = "";
-        let monto_cuota = document.getElementById("monto_cuota");
-        monto_cuota.value = "";
-        let cedula_alumno_cuota = document.getElementById("cedula_alumno");
-        cedula_alumno_cuota.value = "";
+        let precio = document.getElementById("precio");
+        precio.value = "";
         $('#detalle_modal').modal('show');
     };
     // control modal cierre
@@ -114,6 +141,7 @@ opcion_dropdown.addEventListener("click", function(){
 
     // Cambio de forma de pago
     factura_productos.cbo_forma_pago.onchange = function(){
+      if(factura_productos.chk_contado.checked){
         if(factura_productos.cbo_forma_pago.value == "C"){
             factura_productos.conetendor_cheque.style.display = "flex";
             url_facturacion_producto = "http://localhost:8000/factura_cheque";
@@ -126,6 +154,10 @@ opcion_dropdown.addEventListener("click", function(){
             factura_productos.conetendor_cheque.style.display = "none";
             url_facturacion_producto = "http://localhost:8000/factura_tarjeta";
         }
+      }else {
+        alert("No se puede cambiar si su factura es credito");
+        factura_productos.cbo_forma_pago.selectedIndex = 0;
+      }
     };
 
     //Cargar los puntos de expedicion
@@ -177,6 +209,7 @@ opcion_dropdown.addEventListener("click", function(){
           }
           else{
               ultimo_numero_factura_productos(talonario_cuota[0].id_talonario, factura_productos);
+              factura_productos.id_talonario = talonario_cuota[0].id_talonario;
           }
     };
 
@@ -201,7 +234,8 @@ opcion_dropdown.addEventListener("click", function(){
             else{
                 for (let dato of clientes_cuotas) {
                   let nueva_opcion = document.createElement("option");
-                  nueva_opcion.value = dato.id_cliente + " " + dato.nombre;
+                  nueva_opcion.value = dato.nombre;
+                  nueva_opcion.id = dato.id_cliente;
                   factura_productos.lst_clientes.appendChild(nueva_opcion);
                   }
             }
@@ -210,61 +244,185 @@ opcion_dropdown.addEventListener("click", function(){
 
     // Carga la cabecera de la factura
     factura_productos.txt_cliente.onchange = async function(){
-        let id = factura_productos.txt_cliente.value.substr(0,1);
-        factura_productos.cliente_id = id;
-        const solicitud = new Request(URL_CLIENTES + "/"+ id, {
-            method: "Get",
-            withCredentials: true,
-            credentials: "include",
-            headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-            "Content-Type": "application/json",
-            },
-        });
-        const respuesta = await fetch(solicitud);
-        const cliente_unico_cuota = await respuesta.json();
-        
-        if(!respuesta.ok){
-            alert("Algo salio mal al cargar el cliente");
+        let id = "";
+        for(let i = 0; factura_productos.lst_clientes.options.length > i; i++){
+          if (factura_productos.lst_clientes.options[i].value === factura_productos.txt_cliente.value){
+            id = factura_productos.lst_clientes.options[i].id;
+          }
         }
-        else{
-           factura_productos.txt_cliente_nombre.innerHTML = cliente_unico_cuota.nombre;
-           factura_productos.txt_cliente_ruc.innerHTML = cliente_unico_cuota.ruc;
-           factura_productos.txt_cliente_direccion.innerHTML = cliente_unico_cuota.direccion;
-           factura_productos.txt_cliente_telefono.innerHTML = cliente_unico_cuota.telefono;
-        }
-    };
+        if (id !== ""){
 
-    // Buscar Cuotas por cedula del cliente
-    detalle_factura.btn_buscar_cliente.onclick = async function(){
-        if(detalle_factura.cbo_pagares.options[0]===undefined){
-            const solicitud = new Request(URL_PAGARES_PRODUCTOS+"/"+detalle_factura.txt_ruc_cliente_cuota.value, {
+          factura_productos.id_cliente = id;
+          const solicitud = new Request(URL_CLIENTES + "/"+ id, {
               method: "Get",
               withCredentials: true,
               credentials: "include",
               headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-                "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+              "Content-Type": "application/json",
               },
-            });
-            const respuesta = await fetch(solicitud);
-            const pagares_cuotas = await respuesta.json();
+          });
+          const respuesta = await fetch(solicitud);
+          const cliente_unico_cuota = await respuesta.json();
           
-            if(!respuesta.ok){
-                alert("Algo salio mal al cargar los pagares");
-            }
-            else{
-                for (let dato of pagares_cuotas) {
-                    let nueva_opcion = document.createElement("option");
-                    nueva_opcion.value = dato.id_pagare;
-                    nueva_opcion.text = `Cuota numero:${dato.numero_cuota} monto:${dato.monto}`;
-                    detalle_factura.cbo_pagares.appendChild(nueva_opcion);
-                  }
-            }
+          if(!respuesta.ok){
+              alert("Algo salio mal al cargar el cliente");
           }
+          else{
+             factura_productos.txt_cliente_nombre.innerHTML = cliente_unico_cuota.nombre;
+             factura_productos.txt_cliente_ruc.innerHTML = cliente_unico_cuota.ruc;
+             factura_productos.txt_cliente_direccion.innerHTML = cliente_unico_cuota.direccion;
+             factura_productos.txt_cliente_telefono.innerHTML = cliente_unico_cuota.telefono;
+          }
+        }
     };
 
+    // Carga de Productos
+    detalle_factura.txt_producto.onmouseover = async function(){
+        if(detalle_factura.lst_productos.options[0]===undefined){
+          const solicitud = new Request(URL_PRODUCTOS+"/"+localStorage.getItem("sucursal_elegida"), {
+            method: "Get",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+              "Content-Type": "application/json",
+            },
+          });
+          const respuesta = await fetch(solicitud);
+          const productos_disponibles = await respuesta.json();
+        
+          if(!respuesta.ok){
+              alert("Algo salio mal al cargar los productos");
+          }
+          else{
+            
+              for (let dato of productos_disponibles) {
+                let nueva_opcion = document.createElement("option");
+                nueva_opcion.value = dato.producto.descripcion;
+                nueva_opcion.id = dato.producto.id_producto;
+                detalle_factura.lst_productos.appendChild(nueva_opcion);
+                }
+          }
+        }
+    };
+
+    // Seleccionar producto
+    detalle_factura.txt_producto.onchange = async ()=>{
+      let id = "";
+      for(let i = 0; detalle_factura.lst_productos.options.length > i; i++){
+        if (detalle_factura.lst_productos.options[i].value === detalle_factura.txt_producto.value){
+          id = detalle_factura.lst_productos.options[i].id;
+        }
+      }
+      if(id!=="" && detalle_factura.cbo_descuento.value !== ""){
+        const solicitud = new Request(URL_PRODUCTOS+"_buscar/"+localStorage.getItem("sucursal_elegida")+"/"+id, {
+          method: "Get",
+          withCredentials: true,
+          credentials: "include",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        });
+        const respuesta = await fetch(solicitud);
+        const producto_unico = await respuesta.json();
+      
+        if(!respuesta.ok){
+            alert("Algo salio mal al cargar el producto");
+        }
+        else{
+          detalle_factura.id_descuento = detalle_factura.cbo_descuento.value;
+          detalle_factura.id_producto = producto_unico.producto.id_producto;
+          detalle_factura.txt_disponible.value = producto_unico.cantidad;
+          detalle_factura.txt_precio.value = producto_unico.producto.precio;
+        }
+      }else {
+        alert("No se selecciono ningun cliente o el descuento");
+        detalle_factura.txt_producto.value="";
+      }
+    };    
+
+    // Carga de descuentos 
+    detalle_factura.cbo_descuento.onmouseover =async function(){
+      if(detalle_factura.cbo_descuento.options[0]===undefined){
+        const solicitud = new Request(URL_DESCUENTOS, {
+            method: "Get",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+              "Content-Type": "application/json",
+            },
+          });
+          const respuesta = await fetch(solicitud);
+          const descuento_cuota= await respuesta.json();
+        
+          if(!respuesta.ok){
+              alert("Algo salio mal al cargar los descuentos");
+          }
+          else{
+              for (let dato of descuento_cuota) {
+                  let nueva_opcion = document.createElement("option");
+                  nueva_opcion.value = dato.id_tipo_descuento;
+                  nueva_opcion.text = `${dato.porcentaje * 100}%`;
+                  detalle_factura.cbo_descuento.appendChild(nueva_opcion);
+                }
+          }
+      } 
+    };
+    // Carga de impuesto
+
+    
+    // Boton de agregar detalle
+    factura_productos.btn_agregar_detalle_producto_modal.onclick = function(){
+      let porcentaje = detalle_factura.cbo_descuento.options[detalle_factura.cbo_descuento.selectedIndex].text;
+      detalle_factura.txt_porcentaje_descuento = porcentaje;
+      console.log(detalle_factura.txt_porcentaje_descuento)
+      let btn = insertar_detalle_producto(detalle_factura);
+      let fila = document.getElementsByClassName("fila_detalle");
+      $('#detalle_modal').modal('hide');
+      for (let i = 0; btn.length > i; i++){
+        btn[i].onclick = ()=>{
+          fila[i].remove();
+        }
+      }
+    };
+    //Boton cancelar
+    factura_productos.btn_cancelar.onclick = function(){
+      contenedor_factura_productos.innerHTML="";
+    };
+    factura_productos.btn_guardar.onclick = ()=>{
+      factura_productos_item.numero_factura = factura_productos.txt_numero_factura.innerHTML;
+      factura_productos_item.id_talonario = factura_productos.id_talonario;
+      factura_productos_item.fecha_emision = factura_productos.txt_fecha.innerHTML;
+      factura_productos_item.condicion_pago = factura_productos.chk_contado.value;
+      factura_productos_item.forma_pago = factura_productos.cbo_forma_pago.value;
+      factura_productos_item.id_cliente = factura_productos.id_cliente;
+      factura_productos_item.id_usuario = factura_productos.id_usuario;
+      factura_productos_item.id_insititucion = factura_productos.id_sucursal;
+
+      console.log(factura_productos_item);
+    };
 });
+
+// Insertar detalle en el dom
+const insertar_detalle_producto = (datos)=>{
+  datos.cuerpo.innerHTML += `<tr class="fila_detalle">
+  <th scope="row">${datos.txt_producto.value}</th>
+  <td>${datos.cbo_descuento.options[datos.cbo_descuento.selectedIndex].text}</td>
+  <td>${datos.txt_precio.value}</td>
+  <td>${datos.txt_cantidad.value}</td>
+  <td><button class="btn btn-danger eliminar_detalle">Eliminar</button></td>
+  <input type="hidden" value="${datos.id_producto}">
+  <input type="hidden" value="${datos.id_descuento ? datos.id_descuento : 1}">
+  <input type="hidden" value="${datos.txt_descuento}">
+  <input type="hidden" value="${datos.txt_porcentaje_descuento}">
+  </tr>`;
+  let btn_eliminar_linea = document.getElementsByClassName("eliminar_detalle");
+  
+  return btn_eliminar_linea;
+};
 
 // Funcion para llamar al ultimo numero de factura
 const ultimo_numero_factura_productos = async function(id_talonario, datos){
@@ -284,10 +442,12 @@ const ultimo_numero_factura_productos = async function(id_talonario, datos){
           alert("Algo salio mal al cargar el ultimo numero de factura");
       }
       else{
-          
           datos.txt_numero_factura.innerHTML = numero_factura_cuota.cod
       }
 }
+
+
+
 
 // El html a insertarse en el contenedor
 const html_factura_productos = `
@@ -370,6 +530,7 @@ const html_factura_productos = `
                   <th scope="col">Descripcion</th>
                   <th scope="col">Descuento</th>
                   <th scope="col">Monto</th>
+                  <th scope="col">Cantidad</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -388,55 +549,55 @@ const html_factura_productos = `
           </div>
           <!-- Modal  -->
           <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="detalle_modal">
-          <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Busqueda de Cuotas</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrar_detalle_modal">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div>
-                  <div class="form-row col-12" style="justify-content: space-around;">
-                    <div class="mb-3 col-4">
-                      <label for="cedula_alumno" class="form-label">Cedula</label>
-                      <input type="text" class="form-control" id="cedula_alumno">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Busqueda de productos</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrar_detalle_modal">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div>
+                    <div class="form-row col-12" style="justify-content: space-around;">
+                      <div class="col-10">
+                        <label for="producto" class="form-label">Buscar producto</label>
+                        <input class="form-control" list="lst_productos" id="producto" placeholder="nombre del producto">
+                        <datalist id="lst_productos">
+                          
+                        </datalist>
+                      </div>
                     </div>
-                    <div class="mb-3 col-4">
-                      <button class="btn btn-secondary add-btn" id="buscar_cuotas">Buscar cuotas</button>
+                    <div class="form-row col-12" style="justify-content: space-around; margin-top: 10px;">
+                      <div class="mb-3 col-4">
+                        <label for="cantidad_producto" class="form-label">Cantidad</label>
+                        <input type="text" class="form-control" id="cantidad_producto">
+                      </div>
+                      <div class="mb-3 col-4">
+                        <label for="descuento_producto" class="form-label">Descuento</label>
+                        <select class="form-select" aria-label="Default select example" id="descuento_producto">
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div class="form-row col-12" style="justify-content: space-around;">
-                    <div class="mb-3 col-4">
-                      <label for="pagares_cuotas" class="form-label">Lista de cuotas</label>
-                      <select class="form-select" aria-label="Default select example" id="pagares_cuotas">
-                      </select>
-                    </div>
-                    <div class="mb-3 col-4">
-                      <label for="descuento_cuota" class="form-label">Descuento</label>
-                      <select class="form-select" aria-label="Default select example" id="descuento_cuota">
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-row col-12" style="justify-content: space-around;">
-                    <div class="mb-3 col-4">
-                      <label for="descripcion_cuota" class="form-label">Descripcion</label>
-                      <input type="text" class="form-control" id="descripcion_cuota">
-                    </div>
-                    <div class="mb-3 col-4">
-                      <label for="monto_cuota" class="form-label">Monto Abonado</label>
-                      <input type="text" class="form-control" id="monto_cuota">
+                    <div class="form-row col-12" style="justify-content: space-around;">
+                      <div class="mb-3 col-4">
+                        <label for="disponible" class="form-label">Disponibilidad</label>
+                        <input type="text" class="form-control" id="disponible" disabled>
+                      </div>
+                      <div class="mb-3 col-4">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="precio" disabled>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="agregar_detalle_curso">Agregar</button>
+                <input type="hidden" id="id_impuesto" value="0">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" id="agregar_detalle_producto">Agregar</button>
+                </div>
               </div>
             </div>
-          </div>
-          </div>
+            </div>
           <!--  -->
           <hr>
           <div class="form-row col-10" style="margin-top: 60px;">
