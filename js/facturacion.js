@@ -10,7 +10,7 @@ URL_TALONARIO = "http://localhost:8000/talonarios";
 URL_SIGUIENTE_NUMERO = "http://localhost:8000/siguienteNumero";
 URL_CLIENTES = "http://localhost:8000/clientes";
 URL_DESCUENTOS = "http://localhost:8000/descuentos";
-URL_PAGARES = "http://localhost:8000/pagares_cuotas";
+URL_PAGARES_CUOTAS = "http://localhost:8000/pagares_cuotas";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,6 +32,7 @@ const facturas_cuotas = document.getElementById("add_factura_cuotas");
 const contenedor_form_factura_cuotas = document.getElementById("contenedor");
 facturas_cuotas.addEventListener("click", function(){
     contenedor_form_factura_cuotas.innerHTML = form_factura_sineldetallemodal;
+    
     const datos_facturas_cuotas_dom = {
         punto_expedicion_factura_cuotas: document.getElementById("punto_expedicion_factura"),
         numero_factura: document.getElementById("numero_factura"),
@@ -61,7 +62,7 @@ facturas_cuotas.addEventListener("click", function(){
 
     datos_detalle.btn_buscar_alumno.onclick = async ()=>{
       if(datos_detalle.cbo_pagares.options[0]===undefined){
-        const solicitud = new Request(URL_PAGARES+"/"+datos_detalle.cedula_alumno_cuota.value, {
+        const solicitud = new Request(URL_PAGARES_CUOTAS+"/"+datos_detalle.cedula_alumno_cuota.value, {
           method: "Get",
           withCredentials: true,
           credentials: "include",
@@ -116,6 +117,16 @@ facturas_cuotas.addEventListener("click", function(){
     };
 
     datos_facturas_cuotas_dom.btn_agregar_detalle_cuota.onclick = () =>{
+      let cbo_pagares = document.getElementById("pagares_cuotas");
+      cbo_pagares.innerHTML="";
+      let cbo_descuento = document.getElementById("descuento_cuota");
+      cbo_descuento.innerHTML="";
+      let descripcion_cuota = document.getElementById("descripcion_cuota");
+      descripcion_cuota.value = "";
+      let monto_cuota = document.getElementById("monto_cuota");
+      monto_cuota.value = "";
+      let cedula_alumno_cuota = document.getElementById("cedula_alumno");
+      cedula_alumno_cuota.value = "";
       $('#detalle_modal').modal('show');
     };
 
@@ -277,70 +288,80 @@ const ultimo_numero_factura = async (id_talonario, datos)=>{
 };
 
 
+
 const form_factura_sineldetallemodal = `
-<div class="col-8">
-<label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
-  <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">
-  <datalist id="lista_clientes">
-   
-  </datalist>
-</div>
 <input type="hidden" id="cliente_id">
-<div class="col-12 form-row">
-  <div class="col-7 factura-info">
-    <div class="form-row col-12 datos-text" >
-      <div class="col-6">Fecha: <span id="fecha_cliente"></span></div>
-      <div class="form-check col-6">
-        <label class="form-check-label" for="chk_contado">
-          Contado
-        </label>
-        <input class="form-check-input" type="checkbox" value="E" id="chk_contado" checked disabled>
-      </div>
-    </div>
-    <div class="form-row col-12 datos-text">
-      <div class="col-6">Cliente: <span id="cliente_nombre"></span></div>
-      <div class="col-6">Telefono: <span id="cliente_telefono"></span></div>
-    </div>
-    <div class="form-row col-12 datos-text">
-      <div class="col-6">RUC: <span id="cliente_ruc"></span></div>
-      <div class="col-6">Direccion: <span id="cliente_direccion"></span></div>
-    </div>
-  </div>
-  <div class="col-4 factura-info">
-    <div class="form-row col-12">
-      <div class="col-6" style="margin-top: 20px; margin-left: 90px;">
-        <label for="punto_expedicion_factura" class="form-label">Punto Expedicion</label>
-        <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
-          
-        </select>
-        <input type="hidden" id="id_codigo_set">
-      </div>
-    </div>
-    <div class="form-row col-12">
-      <div class="col-6" style="margin-top: 20px; margin-left: 120px; font-size: 20px;">
-        Factura N°: <span id="numero_factura">2000</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="detalle_table_contenedor" class="col-10">
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Descripcion</th>
-        <th scope="col">Descuento</th>
-        <th scope="col">Monto</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody id="detalle_contenedor">
-      
-    </tbody>
-  </table>
-
-</div>
+            <div class="col-12 form-row">
+              <div class="col-7 factura-info">
+                <div class="form-row col-12 datos-text" >
+                  <div class="col-6">Fecha: <span id="fecha_cliente"></span></div>
+                  <div class="form-check col-6">
+                    <label class="form-check-label" for="chk_contado">
+                      Contado
+                    </label>
+                    <input class="form-check-input" type="checkbox" value="E" id="chk_contado" checked disabled>
+                  </div>
+                </div>
+                <div class="form-row col-12 datos-text">
+                  <div class="col-6">Cliente: <span id="cliente_nombre"></span></div>
+                  <div class="col-6">Telefono: <span id="cliente_telefono"></span></div>
+                </div>
+                <div class="form-row col-12 datos-text">
+                  <div class="col-6">RUC: <span id="cliente_ruc"></span></div>
+                  <div class="col-6">Direccion: <span id="cliente_direccion"></span></div>
+                </div>
+              </div>
+              <div class="col-4 factura-info">
+                <div class="form-row col-12">
+                  <div class="col-6" style="margin-top: 20px; margin-left: 90px;">
+                    <label for="punto_expedicion_factura" class="form-label">Punto Expedicion</label>
+                    <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
+                      
+                    </select>
+                    <input type="hidden" id="id_codigo_set">
+                  </div>
+                </div>
+                <div class="form-row col-12">
+                  <div class="col-6" style="margin-top: 20px; margin-left: 120px; font-size: 20px;">
+                    Factura N°: <span id="numero_factura">2000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" form-row col-10">
+              <div class="col-6">
+                <label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
+                <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">
+                <datalist id="lista_clientes">
+                  
+                </datalist>
+              </div>
+              <div class="col-4" style="margin-left: 150px;">
+                <label for="forma_pago" class="form-label">Forma de Pago</label>
+                <select class="form-select" aria-label="Default select example" id="forma_pago">
+                  <option value="E">Efectivo</option>
+                  <option value="C">Cheque</option>
+                  <option value="T">Tarjeta</option>
+                </select>
+              </div>
+            </div>
+            <div id="detalle_table_contenedor" class="col-10">
+            
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Descuento</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="detalle_contenedor">
+                  
+                </tbody>
+              </table>
+            
+            </div>
 
 
 <div class="form-row col-9">
@@ -401,7 +422,7 @@ const form_factura_sineldetallemodal = `
 </div>
 <!--  -->
 <hr>
-<div class="form-row col-10" style="margin-top: 60px; margin-left: 1000px;">
+<div class="form-row col-10" style="margin-top: 60px">
   <div class="col-2"> 
     <button class="btn btn-primary">Guardar</button>
   </div>

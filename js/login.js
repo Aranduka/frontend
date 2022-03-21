@@ -41,10 +41,12 @@ const login = async () => {
     localStorage.removeItem('token');
   }
   else{
+    alert(datos)
     let texto = JSON.stringify(datos.sucursales);
     localStorage.setItem('token', datos.access_token);
     localStorage.setItem('sucursales', texto);
     localStorage.setItem('nombre', datos.usuario);
+    localStorage.setItem('id_usuario', datos.id_usuario)
     window.location = "/html/home.html";
   }
 
