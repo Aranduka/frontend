@@ -1,42 +1,9 @@
 // URL
 let url_facturacion_producto = "http://localhost:8000/factura_efectivo";
+let url_imprimir = "http://localhost:8000/facturas/imprimir";
 const URL_PAGARES_PRODUCTOS = "http://localhost:8000/pagares";
 const URL_PRODUCTOS = "http://localhost:8000/productos_sucursal";
 
-// Objeto para insertar la nueva factura
-const factura_productos_item = {
-    numero_factura: null,
-    id_talonario: null,
-    fecha_emision: null,
-    condicion_pago: null,
-    forma_pago: null,
-    anulado: false,
-    total: 0,
-    id_cliente: null, 
-    id_usuario: null,
-    total_iva: 0,
-    id_insititucion: null,
-    detalles_productos: [],
-    detalle_pagare: []
-}
-
-const detalle = {
-  descuento: {
-    id_descuento: null,
-    descripcion: null,
-    porcentaje: null
-  },
-  impuesto: {
-    id_impuesto: null,
-    descripcion: null,
-    procentaje: null
-  },
-  precio: null,
-  cantidad: null,
-  id_producto: null
-};
-
-const detalles = {};
 
 
 
@@ -93,6 +60,7 @@ opcion_dropdown.addEventListener("click", function(){
         id_producto: "",
         txt_id_impuesto: document.getElementById("id_impuesto"),
         cuerpo: document.getElementById("detalle_contenedor"),
+        total_contenedor: document.getElementById("total_precio")
     }
 
     // control modal apertura
@@ -376,23 +344,48 @@ opcion_dropdown.addEventListener("click", function(){
     
     // Boton de agregar detalle
     factura_productos.btn_agregar_detalle_producto_modal.onclick = function(){
-      let porcentaje = detalle_factura.cbo_descuento.options[detalle_factura.cbo_descuento.selectedIndex].text;
+      let porcentaje_texto = detalle_factura.cbo_descuento.options[detalle_factura.cbo_descuento.selectedIndex].text;
+      let porcentaje =parseFloat(porcentaje_texto.substring(0, porcentaje_texto.length -1), 10)/100;
+      detalle_factura.txt_precio.value = detalle_factura.txt_precio.value - (detalle_factura.txt_precio.value * porcentaje);
       detalle_factura.txt_porcentaje_descuento = porcentaje;
-      console.log(detalle_factura.txt_porcentaje_descuento)
-      let btn = insertar_detalle_producto(detalle_factura);
       let fila = document.getElementsByClassName("fila_detalle");
+      let btn = insertar_detalle_producto(detalle_factura);
       $('#detalle_modal').modal('hide');
       for (let i = 0; btn.length > i; i++){
         btn[i].onclick = ()=>{
           fila[i].remove();
+          calcular_total(fila, detalle_factura.total_contenedor);
         }
       }
+      calcular_total(fila, detalle_factura.total_contenedor);
     };
     //Boton cancelar
     factura_productos.btn_cancelar.onclick = function(){
       contenedor_factura_productos.innerHTML="";
     };
+
+    // Boton de guardar factura
     factura_productos.btn_guardar.onclick = ()=>{
+      
+      const factura_productos_item = {
+        numero_factura: null,
+        id_talonario: null,
+        fecha_emision: null,
+        condicion_pago: null,
+        forma_pago: null,
+        anulado: false,
+        total: 0,
+        id_cliente: null, 
+        id_usuario: null,
+        total_iva: 0,
+        id_institucion: null,
+        detalles_productos: [],
+        detalle_pagare: []
+    }
+    
+    
+      const detalles = [];
+
       factura_productos_item.numero_factura = factura_productos.txt_numero_factura.innerHTML;
       factura_productos_item.id_talonario = factura_productos.id_talonario;
       factura_productos_item.fecha_emision = factura_productos.txt_fecha.innerHTML;
@@ -400,9 +393,48 @@ opcion_dropdown.addEventListener("click", function(){
       factura_productos_item.forma_pago = factura_productos.cbo_forma_pago.value;
       factura_productos_item.id_cliente = factura_productos.id_cliente;
       factura_productos_item.id_usuario = factura_productos.id_usuario;
-      factura_productos_item.id_insititucion = factura_productos.id_sucursal;
+      factura_productos_item.id_institucion = factura_productos.id_sucursal;
 
+      
+      let fila = document.getElementsByClassName("fila_detalle");
+      for (let i=0; fila.length > i; i++){
+        let detalle = {
+          descuento: {
+            id_tipo_descuento: null,
+            descripcion: "Exenta",
+            porcentaje: 0.0
+          },
+          impuesto: {
+            id_tipo_impuesto: 1,
+            descripcion: "Exenta",
+            porcentaje: 0.0
+          },
+          precio: null,
+          cantidad: null,
+          id_producto: null
+        };
+        let hijo = fila[i].children;
+        let id_descuento = hijo[6].value; 
+        let id_producto = hijo[5].value;
+        let precio = hijo[2].innerHTML;
+        let cantidad = hijo[3].innerHTML;
+        detalle.descuento.id_tipo_descuento = id_descuento;
+        detalle.id_producto = id_producto;
+        detalle.cantidad = cantidad;
+        detalle.precio = precio;
+        detalles.push(detalle);
+      }
+      
+      if(!factura_productos.chk_contado.checked){
+        factura_productos_item.cantidad_cuotas = factura_productos.txt_cantidad_cuotas.value;
+      }
+      if(factura_productos.cbo_forma_pago.value === "C"){
+        factura_productos_item.numero_cheque = factura_productos.txt_cheque_numero.value;
+        factura_productos_item.banco = factura_productos.txt_cheque_banco.value;
+      }
+      factura_productos_item.detalles_productos = detalles;
       console.log(factura_productos_item);
+      insertar_factura(url_facturacion_producto, factura_productos_item);
     };
 });
 
@@ -446,8 +478,49 @@ const ultimo_numero_factura_productos = async function(id_talonario, datos){
       }
 }
 
+//Calcular total precio 
+const calcular_total = function(lineas, contenedor){
+  let inicio = 0;
+  let resultado = inicio;
+  for(let i = 0; lineas.length > i; i++){
+    let celda = lineas[i].cells
+    
+    resultado += celda[2].innerHTML * celda[3].innerHTML
+    
+  }
+  contenedor.innerHTML = resultado;
+};
 
-
+// insertar factura 
+const insertar_factura = async function(path, datos){
+  const solicitud = new Request(path, {
+    method: 'Post',
+    withCredentials: true,
+    credentials: 'include',
+    headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(datos)
+    });
+    const respuesta = await fetch(solicitud);
+    const factura = await respuesta.json();
+    if (!respuesta.ok) {
+        alert(factura.detail);
+        console.log(factura.detail);
+    }else{
+        alert("Se ha la factura");
+        // insercion de la impresion
+        let link_contrato = document.getElementById("imprimir");
+        link_contrato.href = `${url_imprimir}/${factura.cod}`;
+        //link_contrato.download = "Contrato";
+        link_contrato.style.display = "block";
+        link_contrato.target = "_blank";
+        link_contrato.onclick = ()=>{
+             link_contrato.style.display = "none";
+        };
+    }
+}
 
 // El html a insertarse en el contenedor
 const html_factura_productos = `
@@ -529,7 +602,7 @@ const html_factura_productos = `
                 <tr>
                   <th scope="col">Descripcion</th>
                   <th scope="col">Descuento</th>
-                  <th scope="col">Monto</th>
+                  <th scope="col">Precio Unitario</th>
                   <th scope="col">Cantidad</th>
                   <th scope="col"></th>
                 </tr>
@@ -545,6 +618,9 @@ const html_factura_productos = `
           <div class="form-row col-9">
           <div class="col-4"> 
             <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar cuota</button>
+          </div>
+          <div class="col-4" style="font-size: 20px; font-weigth: bold;" > 
+            Total: <span id="total_precio">0</span>
           </div>
           </div>
           <!-- Modal  -->
@@ -605,7 +681,7 @@ const html_factura_productos = `
                 <button class="btn btn-primary" id="guardar">Guardar</button>
               </div>
               <div class="col-2" id="btn_imprimir"> 
-                <!-- <button class="btn btn-primary" id="imprimir">Imprimir</button> -->
+                <a class="btn btn-primary" id="imprimir" style="display: none;">Imprimir</a>
               </div>
               <div class="col-2"> 
                 <button class="btn btn-primary" id="cancelar">Cancelar</button>
