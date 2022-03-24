@@ -10,6 +10,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../css/facturacion.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facturacion</title>
 </head>
@@ -70,7 +71,7 @@
                   </h2>
                   <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                      <a class="links-accordion"> - Lista</a> </br>
+                      <a class="links-accordion" id="inf_caja_diario"> - Caja diario</a></br>
                     </div>
                   </div>
                 </div>
@@ -116,7 +117,39 @@
       </nav>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="contenedor-form col-12" id="contenedor">
-          
+          <div class="form-row-fac col-8">
+            <div class="mb-3 col-4">
+              <label for="punto_expedicion_factura" class="form-label">Seleccionar Punto Expedicion</label>
+                  <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
+                    <option selected disabled>Ninguna</option>
+                  </select>
+                  <input type="hidden" id="id_codigo_set">
+            </div>
+          </div>
+          <div class="row" style="align-self: stretch; margin-top: 30px;">
+            <div class="col-12">
+              <table class="table" id="contendor_informe"> 
+                <thead>
+                  <tr>
+                    <th>Descripcion</th>
+                    <th>Cantidad</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Tipo Comprobante</th>
+                    <th>Numero de Comprobante</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <td>Hola</td>
+                  <td>Soy</td>
+                  <td>Un</td>
+                  <td>Ejemplo</td>
+                  <td>de </td>
+                  <td>Tabla</td>
+                </tbody>
+            </table>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -128,10 +161,12 @@
       crossorigin="anonymous">
   </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.es.min.js" charset="UTF-8"></script> 
   <script src="../js/facturacion.js"></script>
   <script src="../js/facturacion_cliente.js"></script>
   <script src="../js/facturacion_producto.js"></script>
+  <script src="../js/facturacion_informe.js"></script>
 </body>
 </html>
