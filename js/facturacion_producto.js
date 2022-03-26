@@ -1,12 +1,3 @@
-// URL
-let url_facturacion_producto = "http://localhost:8000/factura_efectivo";
-let url_imprimir = "http://localhost:8000/facturas/imprimir";
-const URL_PAGARES_PRODUCTOS = "http://localhost:8000/pagares";
-const URL_PRODUCTOS = "http://localhost:8000/productos_sucursal";
-
-
-
-
 // Opcion del dropdown para facturar productos
 const opcion_dropdown = document.getElementById("add_factura_productos");
 // Donde se hara display de los elementos html
@@ -375,7 +366,7 @@ opcion_dropdown.addEventListener("click", function(){
         forma_pago: null,
         anulado: false,
         total: 0,
-        id_cliente: null, 
+        id_cliente: null,
         id_usuario: null,
         total_iva: 0,
         id_institucion: null,
@@ -617,7 +608,7 @@ const html_factura_productos = `
 
           <div class="form-row col-9">
           <div class="col-4"> 
-            <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar cuota</button>
+            <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar producto</button>
           </div>
           <div class="col-4" style="font-size: 20px; font-weigth: bold;" > 
             Total: <span id="total_precio">0</span>
