@@ -121,7 +121,7 @@ opcion_dropdown.addEventListener("click", function(){
 
     //Cargar los puntos de expedicion
     factura_productos.cbo_punto_expedicion.onmouseover = async function(){
-        if(factura_productos.cbo_punto_expedicion.options[0]===undefined){
+        if(factura_productos.cbo_punto_expedicion.options[1]===undefined){
             const solicitud = new Request(URL_SET + "/"+ localStorage.getItem("sucursal_elegida"), {
                 method: "Get",
                 withCredentials: true,
@@ -150,7 +150,7 @@ opcion_dropdown.addEventListener("click", function(){
     };
 
     // Carga de talonario y numero factura
-    factura_productos.cbo_punto_expedicion.onclick = async function(){
+    factura_productos.cbo_punto_expedicion.onchange = async function(){
         const solicitud = new Request(URL_TALONARIO + "/"+ factura_productos.id_codigo_set.value, {
             method: "Get",
             withCredentials: true,
@@ -541,7 +541,7 @@ const html_factura_productos = `
                 <div class="col-6" style="margin-top: 20px; margin-left: 90px;">
                   <label for="punto_expedicion_factura" class="form-label">Punto Expedicion</label>
                   <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
-                    
+                    <option selected disabled>Ninguna</option>
                   </select>
                   <input type="hidden" id="id_codigo_set">
                 </div>
@@ -556,7 +556,7 @@ const html_factura_productos = `
           <div class=" form-row col-10">
             <div class="col-6">
               <label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
-              <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">
+              <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre del cliente">
               <datalist id="lista_clientes">
                 
               </datalist>

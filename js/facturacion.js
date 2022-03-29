@@ -198,7 +198,7 @@ facturas_cuotas.addEventListener("click", function(){
 
     // Carga del codigo set
     datos_facturas_cuotas_dom.punto_expedicion_factura_cuotas.onmouseover = async () =>{
-        if(datos_facturas_cuotas_dom.punto_expedicion_factura_cuotas.options[0]===undefined){
+        if(datos_facturas_cuotas_dom.punto_expedicion_factura_cuotas.options[1]===undefined){
             const solicitud = new Request(URL_SET + "/"+ localStorage.getItem("sucursal_elegida"), {
                 method: "Get",
                 withCredentials: true,
@@ -226,7 +226,7 @@ facturas_cuotas.addEventListener("click", function(){
         }
     };
     // Carga de el numero de factura al dale click al codigo set
-    datos_facturas_cuotas_dom.punto_expedicion_factura_cuotas.onclick = async ()=>{
+    datos_facturas_cuotas_dom.punto_expedicion_factura_cuotas.onchange = async ()=>{
         const solicitud = new Request(URL_TALONARIO + "/"+ datos_facturas_cuotas_dom.id_codigo_set.value, {
             method: "Get",
             withCredentials: true,
@@ -504,7 +504,7 @@ const form_factura_sineldetallemodal = `
                   <div class="col-6" style="margin-top: 20px; margin-left: 90px;">
                     <label for="punto_expedicion_factura" class="form-label">Punto Expedicion</label>
                     <select class="form-select" aria-label="Default select example" id="punto_expedicion_factura">
-                      
+                      <option selected disabled>Ninguna</option>
                     </select>
                     <input type="hidden" id="id_codigo_set">
                   </div>
@@ -519,7 +519,7 @@ const form_factura_sineldetallemodal = `
             <div class=" form-row col-10">
               <div class="col-6">
                 <label for="txt_lista_clientes" class="form-label">Buscar cliente</label>
-                <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre o Razon Social">
+                <input class="form-control" list="lista_clientes" id="txt_lista_clientes" placeholder="Nombre del cliente">
                 <datalist id="lista_clientes">
                   
                 </datalist>

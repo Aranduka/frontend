@@ -37,7 +37,7 @@ const compra = document.getElementById("compra");
 
 educacion.addEventListener("click", function () {
   if(cbo_seleccionar_sucursal.value !== ""){
-    localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value)
+    localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value);
     window.location = "/html/educacion.html";
   }else{
     alert("No has elegido ninguna sucursal");
@@ -46,11 +46,22 @@ educacion.addEventListener("click", function () {
 
 facturacion.addEventListener("click", function () {
     if(cbo_seleccionar_sucursal.value !== ""){
-        localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value)
+        localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value);
+        localStorage.setItem("nombre_sucursal_elegida", cbo_seleccionar_sucursal.options[cbo_seleccionar_sucursal.selectedIndex].text);
         window.location = "/html/facturacion.html";
       }else{
         alert("No has elegido ninguna sucursal");
       }
+});
+
+inventario.addEventListener("click", function(){
+    if(cbo_seleccionar_sucursal.value !== ""){
+      localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value);
+      localStorage.setItem("nombre_sucursal_elegida", cbo_seleccionar_sucursal.options[cbo_seleccionar_sucursal.selectedIndex].text);
+      window.location = "/html/inventario.html";
+    }else{
+      alert("No has elegido ninguna sucursal");
+    }
 });
 
 

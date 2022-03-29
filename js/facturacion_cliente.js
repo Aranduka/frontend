@@ -87,7 +87,8 @@ btn_edit_cliente.addEventListener("click", function(){
             else{
                 for (let dato of clientes) {
                   let nueva_opcion = document.createElement("option");
-                  nueva_opcion.value = dato.id_cliente + " " + dato.nombre;
+                  nueva_opcion.value = dato.nombre;
+                  nueva_opcion.id = dato.id_cliente;
                   datos_clientes.lista_clientes.appendChild(nueva_opcion);
                   }
             }
@@ -95,7 +96,13 @@ btn_edit_cliente.addEventListener("click", function(){
     };
 
     datos_clientes.txt_lista_clientes.onchange = async ()=>{
-        datos_clientes.id_cliente = datos_clientes.txt_lista_clientes.value.substr(0, 1);
+    
+        for(let i = 0; datos_clientes.lista_clientes.options.length > i; i++){
+          if (datos_clientes.lista_clientes.options[i].value === datos_clientes.txt_lista_clientes.value){
+            datos_clientes.id_cliente = datos_clientes.lista_clientes.options[i].id;
+          }
+        }
+        
         const solicitud = new Request(URL_CLIENTES + "/"+  datos_clientes.id_cliente, {
             method: "Get",
             withCredentials: true,
