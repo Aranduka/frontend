@@ -64,4 +64,14 @@ inventario.addEventListener("click", function(){
     }
 });
 
+compra.addEventListener("click", function(){
+    if(cbo_seleccionar_sucursal.value !== ""){
+      localStorage.setItem("sucursal_elegida", cbo_seleccionar_sucursal.value);
+      localStorage.setItem("nombre_sucursal_elegida", cbo_seleccionar_sucursal.options[cbo_seleccionar_sucursal.selectedIndex].text);
+      window.location = "/html/compras.html";
+    }else{
+      alert("No has elegido ninguna sucursal");
+    }
+});
+
 
