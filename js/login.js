@@ -1,5 +1,5 @@
-const url_login = "http://192.168.1.109:8000/login";
-const url_usuarios = "http://192.168.1.109:8000/usuarios";
+const url_login = "http://localhost:8000/login";
+const url_usuarios = "http://localhost:8000/usuarios";
 
 document.addEventListener("DOMContentLoaded", function(){
   localStorage.clear()

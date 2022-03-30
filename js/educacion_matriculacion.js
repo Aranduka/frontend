@@ -2,6 +2,7 @@
 const URL_CURSOS = "http://localhost:8000/cursos";
 const URL_CONTRATOS = "http://localhost:8000/contratos";
 const URL_MATRICULACION = "http://localhost:8000/matriculacion";
+const URL_DESCUENTOS = "http://localhost:8000/descuentos"
 
 const btn_inscribir = document.getElementById("inscribir");
 const container_form_matriculacion = document.getElementById("contenedor");
@@ -21,7 +22,9 @@ btn_inscribir.addEventListener("click", function(){
        precio_febrero: document.getElementById("precio_febrero"),
        cbo_cursos: document.getElementById("cursos"),
        btn_guardar_matricula: document.getElementById("crear_matricula"),
-       btn_cancelar_matriculacion: document.getElementById("cancelar_matriculacion")
+       btn_cancelar_matriculacion: document.getElementById("cancelar_matriculacion"),
+       precio_matricula: document.getElementById("costo"),
+       cbo_becas: document.getElementById("becas")
    }
    form_matricula.btn_buscar_alumno.onclick = ()=>{
     buscar_alumno(cedula_alumno.value, form_matricula);
@@ -37,9 +40,38 @@ btn_inscribir.addEventListener("click", function(){
     container_form_matriculacion.innerHTML = "";
    };
 
-   form_matricula.btn_guardar_matricula.onclick = () => {
+   form_matricula.btn_guardar_matricula.onclick =  () => {
     guardar_matricula(form_matricula);
    };
+   form_matricula.cbo_becas.onmouseover = async ()=>{
+     if (form_matricula.cbo_becas.options[0] === undefined){
+
+       const solicitud = new Request(
+         URL_DESCUENTOS,
+         {
+             method: 'Get',
+             withCredentials: true,
+             credentials: 'include',
+             headers: {
+                 'Authorization': 'Bearer ' + localStorage.getItem("token"),
+                 'Content-Type': 'application/json'
+             }
+         });
+         const respuesta = await fetch(solicitud);
+         const descuentos = await respuesta.json();
+         if (!respuesta.ok) {
+           alert("Algo fallo al listar los descuentos");
+         }
+         else {
+             for (let descuento of descuentos) {
+                 let nueva_opcion = document.createElement("option");
+                 nueva_opcion.value = descuento.porcentaje;
+                 nueva_opcion.text = `${descuento.porcentaje*100}%` ;
+                 form_matricula.cbo_becas.appendChild(nueva_opcion);
+             }
+         }
+      };
+     }
 });
 
 const listar_cursos = async (id, form) => {
@@ -108,7 +140,10 @@ const guardar_matricula = async (form) => {
         "id_encargado": form.id_encargado_matriculacion.value,
         "id_curso": form.cbo_cursos.value,
         "id_institucion": localStorage.getItem("sucursal_elegida"),
-        "precio_febrero": form.precio_febrero.value
+        "precio_febrero": form.precio_febrero.value,
+        "costo": form.precio_matricula.value,
+        "anulado": false,
+        "porcentaje_beca": form.cbo_becas.value
     }
     const solicitud = new Request(URL_MATRICULACION, {
         method: 'Post',
@@ -135,6 +170,7 @@ const guardar_matricula = async (form) => {
              link_contrato.style.display = "none";
         };
     }
+    
 }
 
 const form_matriculacion = `
@@ -181,7 +217,17 @@ const form_matriculacion = `
   <div class="mb-3 col-4">
     <label for="precio_febrero" class="form-label">Precio Febrero</label>
     <input type="text" class="form-control" id="precio_febrero">
-  </select>
+</div>
+</div>
+<div class="form-row col-8">
+  <div class="mb-3 col-4">
+    <label for="becas" class="form-label">Seleccionar Beca</label>
+    <select class="form-select" aria-label="Default select example" id="becas">
+    </select>
+  </div>
+  <div class="mb-3 col-4">
+    <label for="costo" class="form-label">Precio matricula</label>
+    <input type="text" class="form-control" id="costo">
 </div>
 </div>
 <div class="form-row col-8">
@@ -198,5 +244,59 @@ const form_matriculacion = `
       Cancelar
     </button>
   </div>
+</div>
+`;
+
+const btn_anular_matricula = document.getElementById("anular_matricula");
+btn_anular_matricula.addEventListener("click", function(){
+   container_form_matriculacion. innerHTML = html_eliminar_matricula;
+   const anular_matricula_datos = {
+     matricula_id: document.getElementById("numero_matriculacion"),
+     btn_guardar: document.getElementById("btn_anular"),
+     btn_cancelar: document.getElementById("btn_cancelar")
+   }
+   
+   anular_matricula_datos.btn_cancelar.onclick = ()=>{
+     container_form_matriculacion.innerHTML = "";
+   };
+
+   anular_matricula_datos.btn_guardar.onclick = async ()=>{
+    const solicitud = new Request(URL_MATRICULACION+"/"+anular_matricula_datos.matricula_id.value, {
+      method: "Put",
+      withCredentials: true,
+      credentials: "include",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json",
+      },
+    });
+    const respuesta = await fetch(solicitud);
+    const dato = await respuesta.json();
+
+    if(!respuesta.ok){
+        alert(dato.detail);
+    }else{
+        alert(dato.mensaje);
+        container_form_matriculacion.innerHTML = "";
+    }
+   };
+
+});
+
+const html_eliminar_matricula = `
+<h2 style="margin-top: 30px;">Anular matriculacion</h2>
+<div class="form-row col-8">
+    <div class="mb-3 col-4">
+        <label for="numero_matriculacion" class="form-label">Número de matriculacion</label>
+        <input type="text" class="form-control" id="numero_matriculacion">
+    </div>
+</div>
+<div class="form-row col-6" style="margin-top: 30px;">
+    <div class="mb-3 col-4" style="margin-left: 150px;">
+        <button class="btn btn-primary" id="btn_anular">Anular</button>
+    </div>
+    <div class="mb-3 col-4" style="margin-right: 50px;">
+        <button class="btn btn-danger" id="btn_cancelar">Cancelar</button>
+    </div>
 </div>
 `;
