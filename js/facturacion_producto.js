@@ -610,7 +610,7 @@ const html_factura_productos = `
           <div class="col-4"> 
             <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar producto</button>
           </div>
-          <div class="col-4" style="font-size: 20px; font-weigth: bold;" > 
+          <div class="col-4" style="font-size: 20px; font-weight: bold;" > 
             Total: <span id="total_precio">0</span>
           </div>
           </div>
@@ -672,10 +672,10 @@ const html_factura_productos = `
                 <button class="btn btn-primary" id="guardar">Guardar</button>
               </div>
               <div class="col-2" id="btn_imprimir"> 
-                <a class="btn btn-primary" id="imprimir" style="display: none;">Imprimir</a>
+                <a class="btn btn-secondary" id="imprimir" style="display: none;">Imprimir</a>
               </div>
               <div class="col-2"> 
-                <button class="btn btn-primary" id="cancelar">Cancelar</button>
+                <button class="btn btn-danger" id="cancelar">Cancelar</button>
               </div>
           </div>
 `;
