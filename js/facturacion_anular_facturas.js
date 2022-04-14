@@ -1,4 +1,4 @@
-const URL_ANULAR_FACTURA = "http://localhost:8000/anular_factura";
+const URL_ANULAR_FACTURA = "http://192.168.100.15:8000/anular_factura";
 
 const anular_factura = document.getElementById("anular_factura");
 const contenedor_anular_factura = document.getElementById("contenedor");

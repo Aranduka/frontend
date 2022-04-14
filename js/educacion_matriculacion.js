@@ -1,8 +1,8 @@
 // URL
-const URL_CURSOS = "http://localhost:8000/cursos";
-const URL_CONTRATOS = "http://localhost:8000/contratos";
-const URL_MATRICULACION = "http://localhost:8000/matriculacion";
-const URL_DESCUENTOS = "http://localhost:8000/descuentos"
+const URL_CURSOS = "http://192.168.100.15:8000/cursos";
+const URL_CONTRATOS = "http://192.168.100.15:8000/contratos";
+const URL_MATRICULACION = "http://192.168.100.15:8000/matriculacion";
+const URL_DESCUENTOS = "http://192.168.100.15:8000/descuentos"
 
 const btn_inscribir = document.getElementById("inscribir");
 const container_form_matriculacion = document.getElementById("contenedor");

@@ -1,8 +1,9 @@
 // URL
-let url_facturacion_producto = "http://localhost:8000/factura_efectivo";
-let url_imprimir = "http://localhost:8000/facturas/imprimir";
-const URL_PAGARES_PRODUCTOS = "http://localhost:8000/pagares";
-const URL_PRODUCTOS = "http://localhost:8000/productos_sucursal";
+let url_facturacion_producto = "http://192.168.100.15:8000/factura_efectivo";
+let url_imprimir = "http://192.168.100.15:8000/facturas/imprimir";
+const URL_PAGARES_PRODUCTOS = "http://192.168.100.15:8000/pagares";
+const URL_PRODUCTOS = "http://192.168.100.15:8000/productos_sucursal";
+const URL_ALUMNOS = "http://192.168.100.15:8000/alumnos_sucursal";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
@@ -10,12 +11,12 @@ if (!localStorage.getItem("token")) {
     window.location = "/";
 }
 
-URL_SET = "http://localhost:8000/set";
-URL_TALONARIO = "http://localhost:8000/talonarios";
-URL_SIGUIENTE_NUMERO = "http://localhost:8000/siguienteNumero";
-URL_CLIENTES = "http://localhost:8000/clientes";
-URL_DESCUENTOS = "http://localhost:8000/descuentos";
-URL_PAGARES_CUOTAS = "http://localhost:8000/pagares_cuotas";
+URL_SET = "http://192.168.100.15:8000/set";
+URL_TALONARIO = "http://192.168.100.15:8000/talonarios";
+URL_SIGUIENTE_NUMERO = "http://192.168.100.15:8000/siguienteNumero";
+URL_CLIENTES = "http://192.168.100.15:8000/clientes";
+URL_DESCUENTOS = "http://192.168.100.15:8000/descuentos";
+URL_PAGARES_CUOTAS = "http://192.168.100.15:8000/pagares_cuotas";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -69,22 +70,24 @@ facturas_cuotas.addEventListener("click", function(){
       id_pagare: "",
       id_descuento: "",
       id_impuesto: "1",
+      cedula: "",
       total_contenedor: document.getElementById("total_precio"),
       txt_porcentaje_descuento: 0.0,
-      btn_buscar_alumno: document.getElementById("buscar_cuotas"),
-      cbo_pagares: document.getElementById("pagares_cuotas"),
+      txt_lista_alumnos: document.getElementById("txt_lista_alumnos"),
+      txt_lista_pagare: document.getElementById("txt_lista_cuotas"),
+      lst_alumnos: document.getElementById("lista_alumnos"),
+      lst_cuotas: document.getElementById("lista_cuotas"),
       cbo_descuento: document.getElementById("descuento_cuota"),
       descripcion_cuota: document.getElementById("descripcion_cuota"),
       monto_cuota: document.getElementById("monto_cuota"),
       cuerpo: document.getElementById("detalle_contenedor"),
-      contador: 1
     }
 
-    // Busca los pagares de los alumnos
-    datos_detalle.btn_buscar_alumno.onclick = async ()=>{
+    // Carga los alumnos
+    datos_detalle.txt_lista_alumnos.onmouseover = async ()=>{
       if (datos_detalle.cbo_descuento.value !== ""){
-        if(datos_detalle.cbo_pagares.options[0]===undefined){
-          const solicitud = new Request(URL_PAGARES_CUOTAS+"/"+datos_detalle.cedula_alumno_cuota.value, {
+        if(datos_detalle.lst_alumnos.options[0]===undefined){
+          const solicitud = new Request(URL_ALUMNOS+"/"+localStorage.getItem("sucursal_elegida"), {
             method: "Get",
             withCredentials: true,
             credentials: "include",
@@ -97,15 +100,14 @@ facturas_cuotas.addEventListener("click", function(){
           const pagares_cuotas = await respuesta.json();
         
           if(!respuesta.ok){
-              alert("Algo salio mal al cargar los pagares");
+              alert("Algo salio mal al cargar los alumnos");
           }
           else{
               for (let dato of pagares_cuotas) {
-                  let nueva_opcion = document.createElement("option");
-                  nueva_opcion.value = dato.id_pagare;
-                  // Añadir aqui la validacion para escribir meses
-                  nueva_opcion.text = `Cuota numero:${dato.numero_cuota} monto:${dato.monto}`;
-                  datos_detalle.cbo_pagares.appendChild(nueva_opcion);
+                let nueva_opcion = document.createElement("option");
+                nueva_opcion.value = `${dato.nombre} ${dato.apellido}`;
+                nueva_opcion.id = dato.cedula;
+                datos_detalle.lst_alumnos.appendChild(nueva_opcion);
                 }
           }
         }
@@ -113,6 +115,43 @@ facturas_cuotas.addEventListener("click", function(){
       else {
         alert("No selecciono ningun descuento");
       }
+    };
+
+    // Carga de pagares
+    datos_detalle.txt_lista_alumnos.onchange = async ()=>{
+      datos_detalle.lst_cuotas.innerHTML = "";
+      let cedula = "";
+      for(let i = 0; datos_detalle.lst_alumnos.options.length > i; i++){
+        if (datos_detalle.lst_alumnos.options[i].value === datos_detalle.txt_lista_alumnos.value){
+          cedula = datos_detalle.lst_alumnos.options[i].id;
+          datos_detalle.cedula = cedula;
+        }
+      }
+     
+      const solicitud = new Request(URL_PAGARES_CUOTAS+"/"+cedula, {
+        method: "Get",
+        withCredentials: true,
+        credentials: "include",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+      const respuesta = await fetch(solicitud);
+      const pagares_cuotas = await respuesta.json();
+    
+      if(!respuesta.ok){
+          alert("Algo salio mal al cargar los pagares");
+      }
+      else{
+          for (let dato of pagares_cuotas) {
+            let nueva_opcion = document.createElement("option");
+            nueva_opcion.value = `${dato.monto}`;
+            nueva_opcion.id = dato.id_pagare;
+            datos_detalle.lst_cuotas.appendChild(nueva_opcion);
+            }
+      }
+    
     };
    
 
@@ -147,16 +186,18 @@ facturas_cuotas.addEventListener("click", function(){
 
     // Despliega el modal
     datos_facturas_cuotas_dom.btn_agregar_detalle_cuota.onclick = () =>{
-      let cbo_pagares = document.getElementById("pagares_cuotas");
-      cbo_pagares.innerHTML="";
+      
       let cbo_descuento = document.getElementById("descuento_cuota");
       cbo_descuento.innerHTML="";
       let descripcion_cuota = document.getElementById("descripcion_cuota");
       descripcion_cuota.value = "";
       let monto_cuota = document.getElementById("monto_cuota");
       monto_cuota.value = "";
-      let cedula_alumno_cuota = document.getElementById("cedula_alumno");
-      cedula_alumno_cuota.value = "";
+      let alumno = document.getElementById("txt_lista_alumnos");
+      alumno.value = "";
+      let cuota = document.getElementById("txt_lista_cuotas");
+      cuota.value = "";
+      
       $('#detalle_modal').modal('show');
     };
 
@@ -283,8 +324,14 @@ facturas_cuotas.addEventListener("click", function(){
 
     // Agrega al dom el nuevo detalle
     datos_facturas_cuotas_dom.btn_agregar_detalle_cuota_modal.onclick = () => {
+      let id = "";
+      for(let i = 0; datos_detalle.lst_cuotas.options.length > i; i++){
+        if (datos_detalle.lst_cuotas.options[i].value === datos_detalle.txt_lista_pagare.value){
+          id = datos_detalle.lst_cuotas.options[i].id;
+        }
+      }
       datos_detalle.id_descuento = datos_detalle.cbo_descuento.value;
-      datos_detalle.id_pagare = datos_detalle.cbo_pagares.value;
+      datos_detalle.id_pagare = id;
       datos_detalle.txt_porcentaje_descuento = datos_detalle.cbo_descuento.options[datos_detalle.cbo_descuento.selectedIndex].text
       let btn = insertar_detalle_cuota(datos_detalle);
       let fila = document.getElementsByClassName("fila_detalle");
@@ -292,6 +339,7 @@ facturas_cuotas.addEventListener("click", function(){
       for (let i = 0; btn.length > i; i++){
         btn[i].onclick = ()=>{
           fila[i].remove();
+          calcular_total_cuota(fila, datos_detalle.total_contenedor);
         }
       }
       calcular_total_cuota(fila, datos_detalle.total_contenedor);
@@ -302,15 +350,15 @@ facturas_cuotas.addEventListener("click", function(){
       if(datos_facturas_cuotas_dom.chk_contado.checked){
         if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "C"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "flex";
-            url_facturacion_producto = "http://localhost:8000/factura_cheque";
+            url_facturacion_producto = "http://192.168.100.15:8000/factura_cheque";
         }
         else if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "E"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "http://localhost:8000/factura_efectivo";
+            url_facturacion_producto = "http://192.168.100.15:8000/factura_efectivo";
         }
         else if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "T"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "http://localhost:8000/factura_tarjeta";
+            url_facturacion_producto = "http://192.168.100.15:8000/factura_tarjeta";
         }
       }else {
         alert("No se puede cambiar si su factura es credito");
@@ -405,7 +453,7 @@ const insertar_detalle_cuota = (datos)=>{
   `;
   
   let btn_eliminar_linea = document.getElementsByClassName("eliminar_detalle");
-  datos.contador+=1;
+  
   return btn_eliminar_linea;
 };
 
@@ -572,7 +620,7 @@ const form_factura_sineldetallemodal = `
   <div class="col-4"> 
     <button class="btn btn-primary" id="agregar_cuota" data-toggle="modal" data-target="detalle_modal">Agregar cuota</button>
   </div>
-  <div class="col-4" style="font-size: 20px; font-weigth: bold;" > 
+  <div class="col-4" style="font-size: 20px; font-weight: bold;" > 
     Total: <span id="total_precio">0</span>
   </div>
 </div>
@@ -589,20 +637,22 @@ const form_factura_sineldetallemodal = `
       <div class="modal-body">
         <div>
           <div class="form-row col-12" style="justify-content: space-around;">
-            <div class="mb-3 col-4">
-              <label for="cedula_alumno" class="form-label">Cedula</label>
-              <input type="text" class="form-control" id="cedula_alumno">
-            </div>
-            <div class="mb-3 col-4">
-              <button class="btn btn-secondary add-btn" id="buscar_cuotas">Buscar cuotas</button>
+            <div class="mb-3 col-10">
+              <label for="txt_lista_alumnos" class="form-label">Buscar alumno</label>
+              <input class="form-control" list="lista_alumnos" id="txt_lista_alumnos" placeholder="Nombre del alumno">
+              <datalist id="lista_alumnos">
+                
+              </datalist>
             </div>
           </div>
           <div class="form-row col-12" style="justify-content: space-around;">
             <div class="mb-3 col-4">
-              <label for="pagares_cuotas" class="form-label">Lista de cuotas</label>
-              <select class="form-select" aria-label="Default select example" id="pagares_cuotas">
-              </select>
-            </div>
+              <label for="txt_lista_pagares" class="form-label">Buscar cuota</label>
+              <input class="form-control" list="lista_cuotas" id="txt_lista_cuotas" placeholder="mes o monto">
+              <datalist id="lista_cuotas">
+                
+              </datalist>
+            </div> 
             <div class="mb-3 col-4">
               <label for="descuento_cuota" class="form-label">Descuento</label>
               <select class="form-select" aria-label="Default select example" id="descuento_cuota">

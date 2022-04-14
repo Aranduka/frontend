@@ -6,10 +6,10 @@ if (!localStorage.getItem("token")) {
 }
 
 // URL 
-const URL_ALERGIAS = "http://localhost:8000/alergias";
-const URL_ENFERMEDADES = "http://localhost:8000/enfermedades";
-const URL_ALUMNOS = "http://localhost:8000/alumnos";
-const URL_TUTOR = "http://localhost:8000/encargados";
+const URL_ALERGIAS = "http://192.168.100.15:8000/alergias";
+const URL_ENFERMEDADES = "http://192.168.100.15:8000/enfermedades";
+const URL_ALUMNOS = "http://192.168.100.15:8000/alumnos";
+const URL_TUTOR = "http://192.168.100.15:8000/encargados";
 
 // Iniciar la pagina
 

@@ -1,5 +1,5 @@
 // URLS
-const URL_INFORMES_DIARIO = "http://localhost:8000/informes/cajadiario";
+const URL_INFORMES_DIARIO = "http://192.168.100.15:8000/informes/cajadiario";
 
 const inf_caja_diaria = document.getElementById("inf_caja_diario");
 const contendor_informe_diario = document.getElementById("contenedor");

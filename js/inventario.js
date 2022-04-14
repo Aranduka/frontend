@@ -6,10 +6,10 @@ if (!localStorage.getItem("token")) {
   }
   
   // URL 
- const URL_PRODUCTOS = "http://localhost:8000/productos";
- const URL_PRODUCTOS_SUCURSAL = "http://localhost:8000/productos_sucursal/";
- const URL_PRODUCTOS_SUCURSAL_UNICO = "http://localhost:8000/productos_sucursal_buscar";
- const URL_PROVEEDORES = "http://localhost:8000/proveedores";
+ const URL_PRODUCTOS = "http://192.168.100.15:8000/productos";
+ const URL_PRODUCTOS_SUCURSAL = "http://192.168.100.15:8000/productos_sucursal/";
+ const URL_PRODUCTOS_SUCURSAL_UNICO = "http://192.168.100.15:8000/productos_sucursal_buscar";
+ const URL_PROVEEDORES = "http://192.168.100.15:8000/proveedores";
   
   // Iniciar la pagina
   
