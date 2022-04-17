@@ -1,3 +1,4 @@
+const dominio = "192.168.100.15:8000";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
@@ -6,12 +7,12 @@ if (!localStorage.getItem("token")) {
 }
   
   // URL 
- const URL_TRANSACCION_COMPRA = "http://192.168.100.15:8000/transaccion_compra"
- const URL_PRODUCTOS_SUCURSAL = "http://192.168.100.15:8000/productos_sucursal";
- const URL_TRANSACCION_AJUSTE = "http://192.168.100.15:8000/transaccion_ajuste";
- const URL_ANULAR_TRANSACCION = "http://192.168.100.15:8000/transacciones";
- const URL_PROVEEDORES = "http://192.168.100.15:8000/proveedores";
- const URL_PRODUCTOS_PROVEEDORES = "http://192.168.100.15:8000/productos_proveedor";
+ const URL_TRANSACCION_COMPRA = "http://"+dominio+"/transaccion_compra"
+ const URL_PRODUCTOS_SUCURSAL = "http://"+dominio+"/productos_sucursal";
+ const URL_TRANSACCION_AJUSTE = "http://"+dominio+"/transaccion_ajuste";
+ const URL_ANULAR_TRANSACCION = "http://"+dominio+"/transacciones";
+ const URL_PROVEEDORES = "http://"+dominio+"/proveedores";
+ const URL_PRODUCTOS_PROVEEDORES = "http://"+dominio+"/productos_proveedor";
   
   // Iniciar la pagina
   
@@ -86,7 +87,7 @@ if (!localStorage.getItem("token")) {
         for(let i = 0; datos_compra.lst_proveedores.options.length > i; i++){
           if (datos_compra.lst_proveedores.options[i].value === datos_compra.txt_proveedor.value){
             id_proveedor = datos_compra.lst_proveedores.options[i].id;
-            datos_compra.id_proveedor = id_proveedor
+            datos_compra.id_proveedor = id_proveedor;
           }
         }
       
@@ -197,7 +198,7 @@ const insertar_compra = async function(datos){
         alert(factura.detail);
         console.log(factura.detail);
     }else{
-        alert("Se ha la factura");
+        alert("Se ha insertado la transaccion");
         
     }
 }

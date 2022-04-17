@@ -10,6 +10,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../css/facturacion.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facturacion</title>
@@ -19,7 +20,7 @@
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="../html/home.html"><h3 id="sucursal"></h3></a>
     <div class="navbar-nav">
       <div class="nav-item text-nowrap">
-        <a class="nav-link px-3" style="margin-right: 100px; cursor: pointer;">Opciones</a>
+        <a class="nav-link px-3" style="margin-right: 100px; cursor: pointer;" id="salir">Salir</a>
       </div>
     </div>
   </header>
@@ -45,7 +46,7 @@
                   </div>
                 </div>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingTwo">
@@ -60,7 +61,7 @@
                     </div>
                   </div>
                 </div>
-            </li>
+            </li> -->
             <li class="nav-item">
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
@@ -71,7 +72,8 @@
                   </h2>
                   <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                      <a class="links-accordion" id="inf_caja_diario"> - Caja diario</a></br>
+                      <a class="links-accordion" id="inf_caja_diario"> - Caja diario</a></br><br>
+                      <a class="links-accordion" id="inf_facturas_fecha">- Factura por rango de fecha</a><br>
                     </div>
                   </div>
                 </div>
@@ -86,11 +88,10 @@
                   </h2>
                   <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                      <a class="links-accordion" id="add_punto_expedicion"> - Agregar nuevo punto de expedicion</a> </br></br>
-                      <a class="links-accordion" id="baja_punto_expedicion"> - Dar de baja punto de expedicion</a> </br></br>
+            
                       <a class="links-accordion" id="add_talonario"> - Agregar talonario de facturacion</a> </br></br>
                       <a class="links-accordion" id="baja_talonario"> - Dar de baja talonario</a> </br></br>
-                      <a class="links-accordion" id="add_impuesto"> - Agregar tipo de impuesto</a> </br></br>
+                      
                       <a class="links-accordion" id="add_descuento"> - Agregar descuento</a> </br>
                     </div>
                   </div>
@@ -118,7 +119,6 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="contenedor-form col-12" id="contenedor">
           
-          
         </div>
       </main>
     </div>
@@ -130,6 +130,8 @@
       crossorigin="anonymous">
   </script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.es.min.js" charset="UTF-8"></script> 
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
@@ -138,12 +140,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.es.min.js" charset="UTF-8"></script> 
   <script src="../js/facturacion.js"></script>
   <script src="../js/facturacion_cliente.js"></script>
   <script src="../js/facturacion_producto.js"></script>
   <script src="../js/facturacion_informe.js"></script>
   <script src="../js/facturacion_anular_facturas.js"></script>
+
+  <script src="../js/facturacion_talonario.js"></script>
+  <script src="../js/salir.js"></script>
 </body>
 </html>

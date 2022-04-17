@@ -1,7 +1,7 @@
 const btn_add_curso = document.getElementById("add_curso");
 const form_container_cursos = document.getElementById("contenedor");
+let lista_materia = [];
 
-let lista_materia = []
 
 btn_add_curso.addEventListener("click", function(){
     form_container_cursos.innerHTML = form_curso_insert;
@@ -65,6 +65,7 @@ btn_add_curso.addEventListener("click", function(){
 });
 
 const crear_curso = async (datos_cursos)=>{
+  
   let item_curso = {
     descripcion: datos_cursos.descripcion_curso.value,
     seccion: datos_cursos.cbo_secciones.value,
@@ -89,11 +90,14 @@ const crear_curso = async (datos_cursos)=>{
   
   const respuesta = await fetch(solicitud);
   const respuesta_cursos = await respuesta.json();
+  
   if (!respuesta.ok) {
     alert("Error al intentar agregar alumno");
     console.log(respuesta_cursos.detail);
+    lista_materia = [];
   }else{
     alert("Se ha insertado el curso: " + item_curso.producto);
+    lista_materia = [];
   }
 }
 

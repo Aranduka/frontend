@@ -1,3 +1,4 @@
+const dominio = "192.168.100.15:8000";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
@@ -6,10 +7,10 @@ if (!localStorage.getItem("token")) {
 }
 
 // URL 
-const URL_ALERGIAS = "http://192.168.100.15:8000/alergias";
-const URL_ENFERMEDADES = "http://192.168.100.15:8000/enfermedades";
-const URL_ALUMNOS = "http://192.168.100.15:8000/alumnos";
-const URL_TUTOR = "http://192.168.100.15:8000/encargados";
+const URL_ALERGIAS = "http://"+dominio+"/alergias";
+const URL_ENFERMEDADES = "http://"+dominio+"/enfermedades";
+const URL_ALUMNOS = "http://"+dominio+"/alumnos";
+const URL_TUTOR = "http://"+dominio+"/encargados";
 
 // Iniciar la pagina
 
@@ -169,15 +170,18 @@ btn_agregar_alumno.addEventListener("click", function () {
 
     const btn_guardar_alumno = document.getElementById("guardar_alumno");
     const btn_cancelar_alumno = document.getElementById("cancelar_alumno");
-
+    
     btn_guardar_alumno.onclick = () => {
-      let sacra = lista_sacramentos_seleccionados.filter((item, index) => {
+      let sacra = [];
+      let aler = [];
+      let enfer = [];
+      sacra = lista_sacramentos_seleccionados.filter((item, index) => {
         return lista_sacramentos_seleccionados.indexOf(item) === index;
       });
-      let aler = lista_alergias_seleccionadas.filter((item, index) => {
+      aler = lista_alergias_seleccionadas.filter((item, index) => {
         return lista_alergias_seleccionadas.indexOf(item) === index;
       });
-      let enfer = lista_enfermedades_seleccionadas.filter((item, index) => {
+      enfer = lista_enfermedades_seleccionadas.filter((item, index) => {
         return lista_enfermedades_seleccionadas.indexOf(item) === index;
       });
 
@@ -203,7 +207,17 @@ btn_agregar_alumno.addEventListener("click", function () {
         id_alergias: aler,
         id_sacramentos: sacra
       }
-      insertar_alumno(datos);
+      if (datos.id_sacramentos.length < 1){
+        datos.id_sacramentos.push(1);
+      }
+      if (datos.id_alergias.length < 1){
+        datos.id_alergias.push(1);
+      }
+      if (datos.id_enfermedades_base.length < 1){
+        datos.id_enfermedades_base.push(1);
+      }
+      console.log(datos);
+      //insertar_alumno(datos);
     };
 
 
@@ -415,13 +429,13 @@ const form_add_tutor = `
   <div class="mb-3 col-4">
     <label for="nacionalidad_tutor" class="form-label">Parentezco</label>
     <select class="form-select" aria-label="Default select example" id="parentezco_tutor">
-      <option value="18">Madre</option>
-      <option value="19">Padre</option>
-      <option value="20">Abuelo</option>
-      <option value="21">Abuela</option>
-      <option value="22">Primo</option>
-      <option value="23">Hermano</option>
-      <option value="24">Tutor</option>
+      <option value="1">Madre</option>
+      <option value="2">Padre</option>
+      <option value="3">Abuelo</option>
+      <option value="4">Abuela</option>
+      <option value="5">Primo</option>
+      <option value="6">Hermano</option>
+      <option value="7">Tutor</option>
     </select>
   </div>
 </div>

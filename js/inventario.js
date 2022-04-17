@@ -1,15 +1,16 @@
 // Restriccion de token
-
+const dominio = "192.168.100.15:8000";
 if (!localStorage.getItem("token")) {
     alert("No esta autorizado");
     window.location = "/";
   }
   
   // URL 
- const URL_PRODUCTOS = "http://192.168.100.15:8000/productos";
- const URL_PRODUCTOS_SUCURSAL = "http://192.168.100.15:8000/productos_sucursal/";
- const URL_PRODUCTOS_SUCURSAL_UNICO = "http://192.168.100.15:8000/productos_sucursal_buscar";
- const URL_PROVEEDORES = "http://192.168.100.15:8000/proveedores";
+ const URL_PRODUCTOS = "http://"+dominio+"/productos";
+ const URL_PRODUCTOS_SUCURSAL = "http://"+dominio+"/productos_sucursal/";
+ const URL_PRODUCTOS_SUCURSAL_UNICO = "http://"+dominio+"/productos_sucursal_buscar";
+ const URL_PROVEEDORES = "http://"+dominio+"/proveedores";
+ const URL_STOCK = "http://"+dominio+"/informes/stock";
   
   // Iniciar la pagina
   
@@ -170,3 +171,78 @@ if (!localStorage.getItem("token")) {
             </div>
           </div>
   `;
+
+const btn_stock = document.getElementById("info_consultar_stock");
+
+btn_stock.addEventListener("click", function(){
+  container_form.innerHTML = html_informe_stock;
+  
+  cargar_datos();
+  
+});
+
+const cargar_datos = async ()=>{
+  const solicitud = new Request(URL_STOCK+"/"+localStorage.getItem("sucursal_elegida"), {
+    method: "Get",
+    withCredentials: true,
+    credentials: "include",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+      "Content-Type": "application/json",
+    },
+  });
+  const respuesta = await fetch(solicitud);
+  const informe_diario_caja = await respuesta.json();
+  if(!respuesta.ok){
+    alert("Algo salio mal al cargar el informe " + informe_diario_caja.detail);
+  }
+  else{
+      for (let dato of informe_diario_caja) {
+        document.getElementById("detalle_informe").innerHTML += `
+          <tr>
+              <td>${dato.id_producto}</td>
+              <td>${dato.descripcion}</td>
+              <td>${dato.precio}</td>
+              <td>${dato.precio_compra}</td>
+              <td>${dato.cantidad}</td>
+          </tr>
+          `;
+        
+        }
+      iniciarDatatable();
+  }
+};
+
+function iniciarDatatable(){
+  $('#tabla').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+          { extend: 'print'},
+          { extend: 'excel'},
+          { extend: 'pdf'}
+      ],
+      'language':{
+          'url': 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+       },
+  });
+}
+
+const html_informe_stock = `
+<h2>Lista de Stock</h2>
+
+<div class="row" style="margin-top: 50px; align-self: stretch;">
+<table class="table" id="tabla">
+    <thead>
+    <th>Codigo Producto</th>
+    <th>Descripcion</th>
+    <th>Precio</th>
+    <th>Precio compra</th>
+    <th>Precio cantidad</th>
+    </thead>
+    <tbody id="detalle_informe"> 
+    
+    </tbody>
+</table>
+</div>
+`;
+  
