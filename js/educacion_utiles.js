@@ -1,4 +1,4 @@
-const URL_MATERIAS = "https://"+dominio+"/materias";
+const URL_MATERIAS = "http://"+dominio+"/materias";
 
 const add_alergias = document.getElementById("add_alergia");
 const add_enfermedad = document.getElementById("add_enfermedad")

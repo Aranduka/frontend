@@ -1,23 +1,23 @@
-const dominio = "sistema-app-test1.herokuapp.com";
+const dominio = "localhost:8000";
 // URL
-let url_facturacion_producto = "https://"+dominio+"/factura_efectivo";
-let url_imprimir = "https://"+dominio+"/facturas/imprimir";
-const URL_PAGARES_PRODUCTOS = "https://"+dominio+"/pagares";
-const URL_PRODUCTOS = "https://"+dominio+"/productos_sucursal";
-const URL_ALUMNOS = "https://"+dominio+"/alumnos_sucursal";
+let url_facturacion_producto = "http://"+dominio+"/factura_efectivo";
+let url_imprimir = "http://"+dominio+"/facturas/imprimir";
+const URL_PAGARES_PRODUCTOS = "http://"+dominio+"/pagares";
+const URL_PRODUCTOS = "http://"+dominio+"/productos_sucursal";
+const URL_ALUMNOS = "http://"+dominio+"/alumnos_sucursal";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
     alert("No esta autorizado");
-    window.location = "/frontend";
+    window.location = "/";
 }
 
-URL_SET = "https://"+dominio+"/set";
-URL_TALONARIO = "https://"+dominio+"/talonarios";
-URL_SIGUIENTE_NUMERO = "https://"+dominio+"/siguienteNumero";
-URL_CLIENTES = "https://"+dominio+"/clientes";
-URL_DESCUENTOS = "https://"+dominio+"/descuentos";
-URL_PAGARES_CUOTAS = "https://"+dominio+"/pagares_cuotas";
+URL_SET = "http://"+dominio+"/set";
+URL_TALONARIO = "http://"+dominio+"/talonarios";
+URL_SIGUIENTE_NUMERO = "http://"+dominio+"/siguienteNumero";
+URL_CLIENTES = "http://"+dominio+"/clientes";
+URL_DESCUENTOS = "http://"+dominio+"/descuentos";
+URL_PAGARES_CUOTAS = "http://"+dominio+"/pagares_cuotas";
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -395,15 +395,15 @@ facturas_cuotas.addEventListener("click", function(){
       if(datos_facturas_cuotas_dom.chk_contado.checked){
         if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "C"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "flex";
-            url_facturacion_producto = "https://"+ dominio +"/factura_cheque";
+            url_facturacion_producto = "http://"+ dominio +"/factura_cheque";
         }
         else if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "E"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "https://"+ dominio +"/factura_efectivo";
+            url_facturacion_producto = "http://"+ dominio +"/factura_efectivo";
         }
         else if(datos_facturas_cuotas_dom.cbo_forma_pago.value == "T"){
             datos_facturas_cuotas_dom.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "https://"+ dominio +"/factura_tarjeta";
+            url_facturacion_producto = "http://"+ dominio +"/factura_tarjeta";
         }
       }else {
         alert("No se puede cambiar si su factura es credito");

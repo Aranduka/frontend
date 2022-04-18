@@ -1,6 +1,6 @@
-const dominio = "sistema-app-test1.herokuapp.com";
-const url_login = "https://"+dominio+"/login";
-const url_usuarios = "https://"+dominio+"/usuarios";
+const dominio = "localhost:8000";
+const url_login = "http://"+dominio+"/login";
+const url_usuarios = "http://"+dominio+"/usuarios";
 
 document.addEventListener("DOMContentLoaded", function(){
   localStorage.clear()

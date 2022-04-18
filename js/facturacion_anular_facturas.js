@@ -1,4 +1,4 @@
-const URL_ANULAR_FACTURA = "https://"+dominio+"/anular_factura";
+const URL_ANULAR_FACTURA = "http://"+dominio+"/anular_factura";
 
 const anular_factura = document.getElementById("anular_factura");
 const contenedor_anular_factura = document.getElementById("contenedor");

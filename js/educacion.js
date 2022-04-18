@@ -1,16 +1,16 @@
-const dominio = "sistema-app-test1.herokuapp.com";
+const dominio = "localhost:8000";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
   alert("No esta autorizado");
-  window.location = "/frontend";
+  window.location = "/";
 }
 
 // URL 
-const URL_ALERGIAS = "https://"+dominio+"/alergias";
-const URL_ENFERMEDADES = "https://"+dominio+"/enfermedades";
-const URL_ALUMNOS = "https://"+dominio+"/alumnos";
-const URL_TUTOR = "https://"+dominio+"/encargados";
+const URL_ALERGIAS = "http://"+dominio+"/alergias";
+const URL_ENFERMEDADES = "http://"+dominio+"/enfermedades";
+const URL_ALUMNOS = "http://"+dominio+"/alumnos";
+const URL_TUTOR = "http://"+dominio+"/encargados";
 
 // Iniciar la pagina
 
@@ -217,7 +217,7 @@ btn_agregar_alumno.addEventListener("click", function () {
         datos.id_enfermedades_base.push(1);
       }
       console.log(datos);
-      //insertar_alumno(datos);
+      insertar_alumno(datos);
     };
 
 
