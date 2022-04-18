@@ -9,7 +9,7 @@ const URL_ALUMNOS = "https://"+dominio+"/alumnos_sucursal";
 
 if (!localStorage.getItem("token")) {
     alert("No esta autorizado");
-    window.location = "/";
+    window.location = "/frontend";
 }
 
 URL_SET = "https://"+dominio+"/set";

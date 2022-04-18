@@ -3,7 +3,7 @@ const dominio = "sistema-app-test1.herokuapp.com";
 
 if (!localStorage.getItem("token")) {
     alert("No esta autorizado");
-    window.location = "/";
+    window.location = "/frontend";
 }
   
   // URL 
