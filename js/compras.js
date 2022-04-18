@@ -1,4 +1,4 @@
-const dominio = "192.168.100.15:8000";
+const dominio = "sistema-app-test1.herokuapp.com";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
@@ -7,12 +7,12 @@ if (!localStorage.getItem("token")) {
 }
   
   // URL 
- const URL_TRANSACCION_COMPRA = "http://"+dominio+"/transaccion_compra"
- const URL_PRODUCTOS_SUCURSAL = "http://"+dominio+"/productos_sucursal";
- const URL_TRANSACCION_AJUSTE = "http://"+dominio+"/transaccion_ajuste";
- const URL_ANULAR_TRANSACCION = "http://"+dominio+"/transacciones";
- const URL_PROVEEDORES = "http://"+dominio+"/proveedores";
- const URL_PRODUCTOS_PROVEEDORES = "http://"+dominio+"/productos_proveedor";
+ const URL_TRANSACCION_COMPRA = "https://"+dominio+"/transaccion_compra"
+ const URL_PRODUCTOS_SUCURSAL = "https://"+dominio+"/productos_sucursal";
+ const URL_TRANSACCION_AJUSTE = "https://"+dominio+"/transaccion_ajuste";
+ const URL_ANULAR_TRANSACCION = "https://"+dominio+"/transacciones";
+ const URL_PROVEEDORES = "https://"+dominio+"/proveedores";
+ const URL_PRODUCTOS_PROVEEDORES = "https://"+dominio+"/productos_proveedor";
   
   // Iniciar la pagina
   

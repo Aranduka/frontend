@@ -1,8 +1,8 @@
 // URL
-const URL_CURSOS = "http://"+dominio+"/cursos";
-const URL_CONTRATOS = "http://"+dominio+"/contratos";
-const URL_MATRICULACION = "http://"+dominio+"/matriculacion";
-const URL_DESCUENTOS = "http://"+dominio+"/descuentos"
+const URL_CURSOS = "https://"+dominio+"/cursos";
+const URL_CONTRATOS = "https://"+dominio+"/contratos";
+const URL_MATRICULACION = "https://"+dominio+"/matriculacion";
+const URL_DESCUENTOS = "https://"+dominio+"/descuentos"
 
 const btn_inscribir = document.getElementById("inscribir");
 const container_form_matriculacion = document.getElementById("contenedor");

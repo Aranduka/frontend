@@ -85,12 +85,12 @@ opcion_dropdown.addEventListener("click", function(){
             if(factura_productos.chk_contado.checked){
                 factura_productos.chk_contado.value = "E";
                 factura_productos.contenedor_cantidad.style.display = "none";
-                url_facturacion_producto = "http://"+dominio+"/factura_efectivo";
+                url_facturacion_producto = "https://"+dominio+"/factura_efectivo";
             }
             else {
                 factura_productos.chk_contado.value = "C"
                 factura_productos.contenedor_cantidad.style.display = "block";
-                url_facturacion_producto = "http://"+dominio+"/factura_credito";
+                url_facturacion_producto = "https://"+dominio+"/factura_credito";
             }
         }else {
             alert("Su factura no puede ser credito")
@@ -103,15 +103,15 @@ opcion_dropdown.addEventListener("click", function(){
       if(factura_productos.chk_contado.checked){
         if(factura_productos.cbo_forma_pago.value == "C"){
             factura_productos.conetendor_cheque.style.display = "flex";
-            url_facturacion_producto = "http://"+dominio+"/factura_cheque";
+            url_facturacion_producto = "https://"+dominio+"/factura_cheque";
         }
         else if(factura_productos.cbo_forma_pago.value == "E"){
             factura_productos.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "http://"+dominio+"/factura_efectivo";
+            url_facturacion_producto = "https://"+dominio+"/factura_efectivo";
         }
         else if(factura_productos.cbo_forma_pago.value == "T"){
             factura_productos.conetendor_cheque.style.display = "none";
-            url_facturacion_producto = "http://"+dominio+"/factura_tarjeta";
+            url_facturacion_producto = "https://"+dominio+"/factura_tarjeta";
         }
       }else {
         alert("No se puede cambiar si su factura es credito");

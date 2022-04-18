@@ -1,4 +1,4 @@
-const URL_INFORMES_TRANSACCION = "http://"+dominio+"/informes/transacciones";
+const URL_INFORMES_TRANSACCION = "https://"+dominio+"/informes/transacciones";
 
 const info_transacciones = document.getElementById("info_consultar_compras");
 

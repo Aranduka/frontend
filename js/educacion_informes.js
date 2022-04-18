@@ -1,4 +1,4 @@
-const URL_INFORME_CURSOS = "http://"+dominio+"/informes/alumnoscursos";
+const URL_INFORME_CURSOS = "https://"+dominio+"/informes/alumnoscursos";
 
 const btn_lista = document.getElementById("info_lista_alumnos");
 

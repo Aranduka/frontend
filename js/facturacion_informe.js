@@ -1,6 +1,6 @@
 // URLS
-const URL_INFORMES_DIARIO = "http://"+dominio+"/informes/cajadiario";
-const URL_FACTURACION_INFORME = "http://"+dominio+"/informes/facturas";
+const URL_INFORMES_DIARIO = "https://"+dominio+"/informes/cajadiario";
+const URL_FACTURACION_INFORME = "https://"+dominio+"/informes/facturas";
 
 const inf_caja_diaria = document.getElementById("inf_caja_diario");
 const contendor_informe_diario = document.getElementById("contenedor");

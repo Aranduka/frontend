@@ -1,4 +1,4 @@
-const dominio = "192.168.100.15:8000";
+const dominio = "sistema-app-test1.herokuapp.com";
 // Restriccion de token
 
 if (!localStorage.getItem("token")) {
@@ -7,10 +7,10 @@ if (!localStorage.getItem("token")) {
 }
 
 // URL 
-const URL_ALERGIAS = "http://"+dominio+"/alergias";
-const URL_ENFERMEDADES = "http://"+dominio+"/enfermedades";
-const URL_ALUMNOS = "http://"+dominio+"/alumnos";
-const URL_TUTOR = "http://"+dominio+"/encargados";
+const URL_ALERGIAS = "https://"+dominio+"/alergias";
+const URL_ENFERMEDADES = "https://"+dominio+"/enfermedades";
+const URL_ALUMNOS = "https://"+dominio+"/alumnos";
+const URL_TUTOR = "https://"+dominio+"/encargados";
 
 // Iniciar la pagina
 
